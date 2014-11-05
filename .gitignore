@@ -1,0 +1,14 @@
+*.log
+.DS_Store
+*~
+*.csv
+data.txt
+app_data
+result
+node_modules
+*.sln
+*.dat
+*.njsproj
+*.sln
+*.suo
+obj
