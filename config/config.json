@@ -2,8 +2,8 @@
     "development":{
 	"database":"fraud",
 	"username":"root",
-	"password":"jinglei.chen@bda.com",
-	"host":"192.168.98.77",
+	"password":"123456",
+	"host":"db-server",
 	"port":3306,
 	"dialect":"mysql"
     }
