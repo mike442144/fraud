@@ -24,6 +24,8 @@ fs.readdirSync(__dirname)
 
 db.Company.hasMany(db.Person,{through:db.CompanyPerson})
 db.Person.hasMany(db.Company,{through:db.CompanyPerson})
+db.Person.hasMany(db.Company,{through:db.BoardMembership})
+db.Company.hasMany(db.Person,{through:db.BoardMembership})
 
 Object.keys(db).forEach(function(modelName) {
     if ("associate" in db[modelName]) {

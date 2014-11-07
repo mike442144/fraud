@@ -14,7 +14,8 @@ module.exports = function(sequelize,DataTypes){
 	website:DataTypes.STRING,
 	employeecount:DataTypes.INTEGER,
 	ticker:DataTypes.STRING,
-	yearfounded:DataTypes.STRING
+	yearfounded:DataTypes.STRING,
+	industry:DataTypes.STRING
     });
     return Company;
 };
