@@ -1,14 +1,20 @@
 "use strict";
 
-modules.exports = function(sequelize,DataTypes){
+module.exports = function(sequelize,DataTypes){
     var Company = sequelize.define("Company",{
-	companyid:DataTypes.STRING,
+	companyid:{
+	    type:DataTypes.INTEGER,
+	    primaryKey:true,
+	    allowNull:false,
+	    unique:true
+	},
 	listed:DataTypes.BOOLEAN,
 	exchange:DataTypes.STRING,
 	desc:DataTypes.TEXT,
 	website:DataTypes.STRING,
-	employeecount:DataTypes.INT,
+	employeecount:DataTypes.INTEGER,
 	ticker:DataTypes.STRING,
 	yearfounded:DataTypes.STRING
     });
+    return Company;
 };
