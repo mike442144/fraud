@@ -14,8 +14,9 @@ app.engine('html',hbs.__express);
 //app.use(bodyParser.json());
 //app.use(bodyParser.urlencoded());
 //app.use(cookieParser());
-app.use(express.static(path.join(__dirname,'public/smartadmin')));
-app.use('/static', express.static(__dirname + '/public/smartadmin'));
+app.use(express.static(path.join(__dirname,'public')));
+app.use('/sm', express.static(__dirname + '/public/smartadmin'));
+app.use('/angle',express.static(__dirname+'/public/angle'));
 
 var routes = require('./routes/index');
 app.use('/',routes);
