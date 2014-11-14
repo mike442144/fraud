@@ -25,7 +25,7 @@ module.exports = function(sequelize,DataTypes){
 	pager:DataTypes.STRING,
 	desc:DataTypes.TEXT,
 	title:DataTypes.STRING,
-	fraud:DataTypes.BOOLEAN
+	fraud:DataTypes.INTEGER
     });
     return Person;
 };

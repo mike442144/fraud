@@ -15,7 +15,7 @@ module.exports = function(sequelize,DataTypes){
 	ticker:DataTypes.STRING,
 	yearfounded:DataTypes.STRING,
 	industry:DataTypes.STRING,
-	fraud:DataTypes.BOOLEAN
+	fraud:DataTypes.INTEGER
     });
     return Company;
 };
