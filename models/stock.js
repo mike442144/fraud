@@ -8,6 +8,12 @@ module.exports = function(sequelize,DataTypes){
 	    allowNull:false,
 	    unique:true
 	},
+	exchange:DataTypes.STRING,
+	ticker:DataTypes.STRING,
+	start:DataTypes.DATE,
+	end:DataTypes.DATE,
+	sector:DataTypes.STRING,
+	industry:DataTypes.STRING,
     });
     return Stock;
 };

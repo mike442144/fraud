@@ -11,7 +11,7 @@ var db        = {};
 
 fs.readdirSync(__dirname)
     .filter(function(file) {
-	return (file.indexOf(".") !== 0) && (file !== "index.js");
+	return (file.search("~")==-1 && file.indexOf(".") !== 0) && (file !== "index.js");
     })
     .forEach(function(file) {
 	var model = sequelize["import"](path.join(__dirname, file));
@@ -19,13 +19,14 @@ fs.readdirSync(__dirname)
 	db[model.name] = model;
     });
 
-//console.log(db.Company instanceof Sequelize.Model);
-//console.log(db.Person instanceof Sequelize.Model);
-
+//define the relationship for the objects.
 db.Company.hasMany(db.Person,{through:db.CompanyPerson})
 db.Person.hasMany(db.Company,{through:db.CompanyPerson})
 db.Person.hasMany(db.Company,{through:db.BoardMembership})
 db.Company.hasMany(db.Person,{through:db.BoardMembership})
+db.Stock.belongsTo(db.Company,{foreignKey:"companyid"})
+db.Quote.belongsTo(db.Stock,{foreignKey:"stockcode"})
+
 
 Object.keys(db).forEach(function(modelName) {
     if ("associate" in db[modelName]) {

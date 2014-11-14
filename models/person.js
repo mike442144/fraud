@@ -24,7 +24,8 @@ module.exports = function(sequelize,DataTypes){
 	otherphone:DataTypes.STRING,
 	pager:DataTypes.STRING,
 	desc:DataTypes.TEXT,
-	title:DataTypes.STRING
+	title:DataTypes.STRING,
+	fraud:DataTypes.BOOLEAN
     });
     return Person;
 };
