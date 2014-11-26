@@ -1,0 +1,222 @@
+﻿
+<!-- Existin Template begin -->
+<div class="panel panel-default mt-lg">
+	<div class="panel-heading">Select Existin Template:</div>
+	<div class="panel-body">
+		
+		<div class="btn-group">
+			<label ng-model="currentTplInfo.id" ng-repeat="list in templateList" btn-radio="{{list.tplName}}" ng-class="{'active':currentTplInfo.id == list.id}" uncheckable="uncheckable" class="btn btn-success" ng-click="selectTpl(list)">{{list.tplName}}</label>
+		</div>
+		
+	</div>
+</div>
+
+<!-- Existin Template end -->
+
+<div class="row">
+	<div class="col-sm-6">
+		<!-- START panel-->
+		<div class="panel panel-default">
+			<div class="panel-body" style="height:428px">
+				<form method="get" action="/" class="form-horizontal">
+					<fieldset>
+						<legend>Fraud Management:</legend>
+						<div>
+							<div class="ml-xl"><label>Degree of importance for fraud company</label></div>
+							<div class="ml-xl mt">
+								<input ui-slider="" type="text" value="" data-slider-min="0" data-slider-max="10" data-slider-step="5" data-slider-value="0" data-slider-orientation="horizontal" class="slider slider-horizontal form-control" />
+		  
+							</div>
+							<div class="col-sm-8 mt">
+								<div class="col-sm-4">Loose</div>
+								<div class="col-sm-4">Medium</div>
+								<div class="col-sm-4">tight</div>
+							</div>
+						</div>
+					</fieldset>
+					<fieldset>
+						<div class="ml-xl"><label>Degree of importance for affiliations</label></div>
+						<div class="ml-xl mt">
+							<input ui-slider="" type="text" value="" data-slider-min="0" data-slider-max="10" data-slider-step="5" data-slider-value="0" data-slider-orientation="horizontal" class="slider slider-horizontal form-control" />
+						</div>
+						<div class="col-sm-8 mt">
+							<div class="col-sm-4">Loose</div>
+							<div class="col-sm-4">Medium</div>
+							<div class="col-sm-4">tight</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>   
+	</div>
+	
+	
+	<div class="col-sm-6">
+		<!-- START panel-->
+		<div class="panel panel-default">
+			<div class="panel-body">
+			 
+				<form method="get" action="/" class="form-horizontal">
+					<fieldset>
+						<legend>Affiliations:</legend>
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Market capitalization:</label>
+							<div class="col-sm-6">
+								<div class="col-sm-2">>USD </div>
+								<div class="col-sm-4">
+									<select name="marketCapitalization" ng-model="currentTplInfo.marketCapitalization" ng-options="item.id as item.text for item in constants.capitalization">
+										<option value="" style="display:none"></option>
+										
+									</select>
+								</div>
+								<div class="col-sm-2">MIN</div>
+							</div>
+						</div>
+					</fieldset>
+					
+					<fieldset>
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Daily Trading Volume:</label>
+							<div class="col-sm-6">
+								<div class="col-sm-2">>USD </div>
+								<div class="col-sm-4">
+									<select name="dailyTradingVolume" ng-model="currentTplInfo.dailyTradingVolume" ng-options="item.id as item.text for item in constants.dailyTradingVolume">
+										<option value="" style="display:none"></option>
+									</select>
+								</div>
+								<div class="col-sm-2">MIN</div>
+							</div>
+						</div>
+					</fieldset>
+					
+					<fieldset>
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Suspicious Auditor:</label>
+							<div class="col-sm-6">
+								<div class="checkbox">
+									<label><input type="checkbox" value="" ng-checked="currentTplInfo.suspiciousAuditor">Yes</label>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					
+					<fieldset>
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Suspicious Financial Advisor:</label>
+							<div class="col-sm-6">
+								<div class="checkbox">
+									<label><input type="checkbox" value="" ng-checked="currentTplInfo.suspiciousFinancialAdvisor">Yes</label>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					
+					<fieldset>
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Legal Advisor:</label>
+							<div class="col-sm-6">
+								<div class="checkbox">
+									<label><input type="checkbox" value="" ng-checked="currentTplInfo.legalAdvisor">Yes</label>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			 
+			 </div>
+		  </div>
+		  <!-- END panel-->
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-sm-6">
+		<!-- START panel-->
+		<div class="panel panel-default">
+			<div class="panel-body">
+				<form method="get" action="/" class="form-horizontal">
+					<fieldset>
+						<legend>Others:</legend>
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Short-sellable:</label>
+							<div class="col-sm-6">
+								<div class="checkbox">
+									<label><input type="checkbox" value="" ng-checked="currentTplInfo.shortSellable">Yes</label>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					
+					<fieldset>
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Reputable Company:</label>
+							<div class="col-sm-6">
+								<div class="checkbox">
+									<label><input type="checkbox" value="" ng-checked="currentTplInfo.reputableCompany">Yes</label>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					
+					<fieldset>
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Exchange:</label>
+							<div class="col-sm-6" checkboxcontainer wait-data-ready="true" ng-model="currentTplInfo.exchange">
+								<label class="checkbox checkbox-inline"><input type="checkbox" value="US" class="js_checkbox">US</label>
+								<label class="checkbox-inline"><input type="checkbox" value="HK" class="js_checkbox">HK</label>
+								<br>
+								<label class="checkbox checkbox-inline"><input type="checkbox" value="China" class="js_checkbox">China</label>
+								<label class="checkbox-inline"><input type="checkbox" value="Other" class="js_checkbox">Others</label>
+								
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+	
+	
+	<div class="col-sm-6">
+		<!-- START panel-->
+		<div class="panel panel-default">
+			<div class="panel-body" style="height:318px">
+				<form method="get" action="/" class="form-horizontal">
+					<fieldset>
+						<legend><button type="button" class="mb-sm btn btn-primary">Next</button></legend>
+						<div class="form-group">
+							
+						</div>
+					</fieldset>
+					
+					<fieldset>
+						<div class="form-group">
+							<label class="col-sm-6 control-label">Reputable Company:</label>
+							<div class="col-sm-6">
+								<div class="checkbox">
+									<label><input type="checkbox" value="">Yes</label>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+					
+					<fieldset>
+						<div class="form-group">
+							<button type="button" class="mb-sm btn btn-success ml-lg" ng-click="showTplBtn = true">saveSelections and continue</button>
+							<div ng-show="showTplBtn">
+								<div class="col-sm-6"><input type="text" class="form-control" ng-model="currentTplInfo.saveName"></div>
+								<div class="col-sm-6">
+									<button type="button" class="mb-sm btn btn-primary" ng-click="saveTpl()">Save & continue</button>
+									<button type="button" class="mb-sm btn btn-default" ng-click="showTplBtn = false">cancel</button>
+								</div>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+			</div>
+		</div>
+		<!-- END panel-->
+	</div>
+</div>
+		
+		

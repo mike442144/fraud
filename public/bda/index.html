@@ -1,0 +1,113 @@
+﻿<!DOCTYPE HTML>
+<html lang="en-US" ng-app="dbaApp">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<link rel="stylesheet" href="css/app.css">
+	<link rel="stylesheet" href="vendor/fontawesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="vendor/simplelineicons/simple-line-icons.css">
+	<link rel="stylesheet" href="vendor/tagsinput/bootstrap-tagsinput.css">
+	<link rel="stylesheet" href="vendor/slider/css/slider.css">
+	<style>
+		.white{color:#ffffff}
+		.listCircle{border-radius:12px;width:24px;height:24px;line-height:24px;display:inline-block;text-align:center}
+		.companyTable td{height:40px;line-height:40px}
+	</style>
+</head>
+<body>
+	<!-- header begin -->
+	<div role="navigation" class="navbar topnavbar navbar-default">
+		<div class="navbar-header">
+			<div class="navbar-brand" style="line-height:55px;">
+				TIGER GLOBAL
+			</div>
+		</div>
+		
+		
+		<div class="nav-wrapper ">
+			<ul class="nav navbar-nav navbar-right white mr">
+				<li class="mr mt mb">
+					<div class="has-feedback">
+					   <input type="text" placeholder="" autocomplete="off" class="form-control">
+					   <!-- <span class="icon-magnifier"></span> -->
+					   <a class="fa icon-magnifier form-control-feedback text-muted"></a>
+					</div>
+				 </li>
+				 <li class="mt-sm">
+					<p class="m0">28 Aug 2014 01:37:46 GMT</p>
+					<p class="m0">28 Aug 2014 01:37:46 GMT</p>
+				 </li>
+			</ul>
+		</div>
+		
+	</div>
+	<!-- header end -->
+	
+	<!-- 主体 begin -->
+	<div class="container mt-lg">
+
+		<div class="row mt-lg">
+		   <div class="col-lg-4 col-md-6">
+			  <!-- START widget-->
+			  <a href="#/step1">
+				  <div class="panel widget ">
+					 <div class="row row-table">
+						<div class="col-xs-4 text-center pv-lg" ng-class="{'step1':'bg-primary-dark','step2':'bg-primary','step3':'bg-primary'}[currentPage]">
+						   <em class="icon-share fa-3x"></em>
+						</div>
+						<div class="col-xs-8 pv-lg">
+						   <div class="text-uppercase text-bold m0">Company Seeds</div>
+						</div>
+					 </div>
+				  </div>
+			  </a>
+		   </div>
+		   <div class="col-lg-4 col-md-6">
+			  <!-- START widget-->
+			  <a href="#/step2">
+			  <div class="panel widget">
+				 <div class="row row-table">
+					<div class="col-xs-4 text-center pv-lg" ng-class="{'step1':'bg-primary-light','step2':'bg-primary-dark','step3':'bg-primary'}[currentPage]">
+					   <em class="icon-star fa-3x"></em>
+					</div>
+					<div class="col-xs-8 pv-lg">
+					   <div class="text-uppercase text-bold m0">Set the filtering Criteria</div>
+					</div>
+				 </div>
+			  </div>
+			  </a>
+		   </div>
+		   <div class="col-lg-4 col-md-12">
+			  <!-- START widget-->
+			  <a href="#/step3">
+			  <div class="panel widget">
+				 <div class="row row-table">
+					<div class="col-xs-4 text-center pv-lg" ng-class="{'step1':'bg-primary-light','step2':'bg-primary-light','step3':'bg-primary-dark'}[currentPage]">
+					   <em class="icon-trophy fa-3x"></em>
+					</div>
+					<div class="col-xs-8 pv-lg">
+					   <div class="text-uppercase text-bold m0">View Filtered Results</div>
+					</div>
+				 </div>
+			  </div>
+			  </a>
+		   </div>
+		</div>
+		
+		<div ng-view></div>
+	</div>
+	<!-- 主体 end -->
+	
+	<script src="vendor/jquery/jquery.min.js"></script>
+	<script src="js/lib/angular.min.js"></script>
+	<script src="js/lib/angular-route.min.js"></script>
+	<script src="js/lib/angular-animate.min.js"></script>
+	<script src="vendor/slider/js/bootstrap-slider.js"></script>
+	<script src="js/dbaApp.js"></script>
+	
+	<script src="js/controllers/stepOneCtrl.js"></script>
+	<script src="js/controllers/stepTwoCtrl.js"></script>
+	<script src="js/controllers/stepThreeCtrl.js"></script>
+	
+</body>
+</html>
