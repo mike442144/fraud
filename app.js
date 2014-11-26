@@ -17,6 +17,7 @@ app.engine('html',hbs.__express);
 app.use(express.static(path.join(__dirname,'public')));
 app.use('/sm', express.static(__dirname + '/public/smartadmin'));
 app.use('/angle',express.static(__dirname+'/public/angle'));
+app.use('bda',express.static(__dirname+'/public/bda'));
 
 var routes = require('./routes/index');
 app.use('/',routes);
