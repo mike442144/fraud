@@ -1,4 +1,4 @@
-﻿dbaApp.controller('StepTwoCtrl',['$scope','$http','$rootScope','$filter', '$routeParams','$location',function($scope, $http, $rootScope, $filter, $routeParams,$location){
+﻿dbaApp.controller('StepTwoCtrl',['$scope','$http','$rootScope','$filter', '$routeParams','$location','$timeout',function($scope, $http, $rootScope, $filter, $routeParams,$location,$timeout){
 	$rootScope.currentPage = 'step2';
 	
 	//初始化 获取所有的已有模板的信息
@@ -6,7 +6,7 @@
 		$http.get('js/mockData/templateList.js',{params:{}}).success(function(data){
 			if(data.status == 'ok'){
 				$scope.templateList = data.lists;
-				$scope.$broadcast('dataReady');
+				//$scope.$broadcast('dataReady');
 			}
 		});
 	};
@@ -19,6 +19,8 @@
 			$scope.currentTplInfo = list;
 			
 			$scope.$broadcast('dataReady');
+			
+			
 		}else{
 			$scope.currentTplInfo = null;
 		}
@@ -39,6 +41,4 @@
 			}
 		});
 	};
-	
-	
 }]);
