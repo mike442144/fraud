@@ -8,6 +8,8 @@
 	<link rel="stylesheet" href="vendor/simplelineicons/simple-line-icons.css">
 	<link rel="stylesheet" href="vendor/tagsinput/bootstrap-tagsinput.css">
 	<link rel="stylesheet" href="vendor/slider/css/slider.css">
+	<link rel="stylesheet" href="vendor/datatable/extensions/datatable-bootstrap/css/dataTables.bootstrap.css">
+	
 	<style>
 		.white{color:#ffffff}
 		.listCircle{border-radius:12px;width:24px;height:24px;line-height:24px;display:inline-block;text-align:center}
@@ -46,7 +48,7 @@
 	<!-- 主体 begin -->
 	<div class="container mt-lg">
 
-		<div class="row mt-lg">
+		<div class="row mt-lg" ng-show="currentPage == 'step1' || currentPage == 'step2' || currentPage == 'step3'">
 		   <div class="col-lg-4 col-md-6">
 			  <!-- START widget-->
 			  <a href="#/step1">
@@ -95,6 +97,8 @@
 		</div>
 		
 		<div ng-view></div>
+		
+		
 	</div>
 	<!-- 主体 end -->
 	
@@ -103,11 +107,23 @@
 	<script src="js/lib/angular-route.min.js"></script>
 	<script src="js/lib/angular-animate.min.js"></script>
 	<script src="vendor/slider/js/bootstrap-slider.js"></script>
+	
+	<script src="vendor/datatable/media/js/jquery.dataTables.min.js"></script>
+	
+	<script src="vendor/datatable/extensions/datatable-bootstrap/js/dataTables.bootstrap.js"></script>
+	
+	<script src="vendor/datatable/extensions/datatable-bootstrap/js/dataTables.bootstrapPagination.js"></script>
+	
 	<script src="js/dbaApp.js"></script>
 	
 	<script src="js/controllers/stepOneCtrl.js"></script>
 	<script src="js/controllers/stepTwoCtrl.js"></script>
 	<script src="js/controllers/stepThreeCtrl.js"></script>
-	
+	<script src="js/controllers/personCtrl.js"></script>
+	<script src="js/controllers/companyCtrl.js"></script>
+	<script>
+		
+		
+	</script>
 </body>
 </html>

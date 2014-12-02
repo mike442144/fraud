@@ -69,7 +69,7 @@
 										
 									</select>
 								</div>
-								<div class="col-sm-2">MIN</div>
+								<div class="col-sm-2 ml">MIN</div>
 							</div>
 						</div>
 					</fieldset>
@@ -84,7 +84,7 @@
 										<option value="" style="display:none"></option>
 									</select>
 								</div>
-								<div class="col-sm-2">MIN</div>
+								<div class="col-sm-2 ml">MIN</div>
 							</div>
 						</div>
 					</fieldset>
@@ -161,12 +161,11 @@
 					<fieldset>
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Exchange:</label>
-							<div class="col-sm-6" checkboxcontainer wait-data-ready="true" ng-model="currentTplInfo.exchange">
-								<label class="checkbox checkbox-inline"><input type="checkbox" value="US" class="js_checkbox">US</label>
-								<label class="checkbox-inline"><input type="checkbox" value="HK" class="js_checkbox">HK</label>
-								<br>
-								<label class="checkbox checkbox-inline"><input type="checkbox" value="China" class="js_checkbox">China</label>
-								<label class="checkbox-inline"><input type="checkbox" value="Other" class="js_checkbox">Others</label>
+							
+							<div class="col-sm-6">
+								<label class="checkbox checkbox-inline" ng-repeat="exchange in $parent.constants.exchanges">
+									<input type="checkbox" name="exchange" checklist-model="currentTplInfo.exchange" checklist-value="exchange">{{exchange}}
+								</label>
 								
 							</div>
 						</div>
@@ -180,23 +179,12 @@
 	<div class="col-sm-6">
 		<!-- START panel-->
 		<div class="panel panel-default">
-			<div class="panel-body" style="height:318px">
+			<div class="panel-body" style="height:290px">
 				<form method="get" action="/" class="form-horizontal">
 					<fieldset>
-						<legend><button type="button" class="mb-sm btn btn-primary">Next</button></legend>
+						<legend><a href="#/step3" class="mb-sm btn btn-primary">Next</a></legend>
 						<div class="form-group">
-							
-						</div>
-					</fieldset>
-					
-					<fieldset>
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Reputable Company:</label>
-							<div class="col-sm-6">
-								<div class="checkbox">
-									<label><input type="checkbox" value="">Yes</label>
-								</div>
-							</div>
+							<h1 class="text-gray text-left ml">OR</h1>
 						</div>
 					</fieldset>
 					

@@ -55,9 +55,9 @@
 			  </thead>
 			  <tbody>
 				 <tr ng-repeat="list in companyDetailList">
-					<td>{{list.status == 'plus' && '+' || '-'}}</td>
+					<td>{{(list.status == 'plus' && '+') || (list.status == 'minus' && '-') || ''}}</td>
 					<td>{{list.id}}</td>
-					<td><a ng-href="{{list.url}}">{{list.name}}</a></td>
+					<td><a href="#/person">{{list.name}}</a></td>
 					<td>{{list.ticker}}</td>
 					<td>{{list.marketCap}}</td>
 					<td></td>
