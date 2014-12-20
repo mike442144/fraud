@@ -99,6 +99,9 @@ exports.tpl = function(req,res){
 	    saved:true
 	}
     }).success(function(templates){
+	templates.forEach(function(tpl){
+	    tpl.dataValues.content = JSON.parse(tpl.dataValues.content);
+	});
 	res.success(templates);
     });
 }
@@ -179,16 +182,16 @@ exports.person = function(req,res){
 }
 
 function buildquery(ids,tpl){
-    var query = 'SELECT * FROM CompanyPeople INNER JOIN Companies
-ON Companies.`companyid`=CompanyPeople.companycompanyid
-INNER JOIN Stocks
-ON Stocks.`companyid`=Companies.`companyid`
-INNER JOIN Quotes
-ON Quotes.`stockcode`=Stocks.`stockcode`
-WHERE PersonPersonid IN (
-SELECT PersonPersonid FROM CompanyPeople WHERE CompanyCompanyid IN ('+ids+')
-AND degree >= '+tpl.fraudCompany+'
-)
+    var query = 'SELECT * FROM CompanyPeople INNER JOIN Companies\
+ON Companies.`companyid`=CompanyPeople.companycompanyid\
+INNER JOIN Stocks\
+ON Stocks.`companyid`=Companies.`companyid`\
+INNER JOIN Quotes\
+ON Quotes.`stockcode`=Stocks.`stockcode`\
+WHERE PersonPersonid IN (\
+SELECT PersonPersonid FROM CompanyPeople WHERE CompanyCompanyid IN ('+ids+')\
+AND degree >= '+tpl.fraudCompany+'\
+)\
 AND Companies.reputable = '+tpl.reputableCompany+' AND Companies.`marketcap`> '+tpl.marketCapitalization+' AND Stocks.`shortsellable`>='+tpl.shortSellable+' AND Quotes.`volume`>0 AND Stocks.`listed`=1 AND Stocks.`exchange` in ('+tpl.exchange.join()+')';
     return query;
 }
