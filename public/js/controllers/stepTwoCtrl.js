@@ -46,7 +46,9 @@
 		obj.content.legalAdvisor = transforCheckValue(obj.content.legalAdvisor);
 		obj.content.shortSellable = transforCheckValue(obj.content.shortSellable);
 		obj.content.reputableCompany = transforCheckValue(obj.content.reputableCompany);
-		obj.setId = $routeParams.setid;
+	    delete obj.createdAt;
+	    delete obj.updatedAt;
+//	    obj.setId = $routeParams.setid;
 		return obj;
 	}
 
@@ -81,11 +83,11 @@
 	$scope.saveTpl = function(bool){
 		var obj = transforTplParamsToSubmit(angular.copy($scope.currentTplInfo));
 		obj.saved = bool;
-		
+	    
 		$http({
 			method:'POST', 
 			url: '/template', 
-			data: JSON.stringify(obj), 
+		    data: JSON.stringify({setid:$routeParams.setid,tpl:obj}), 
 			headers : {
 				'Content-Type' : 'application/json'
 			}

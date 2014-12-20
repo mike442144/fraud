@@ -106,11 +106,14 @@ exports.tpl = function(req,res){
     });
 }
 
-exports.addtpl = function(req,res){
-    models.Template.create(req.body).success(function(instance){
-	if(instance){
-	    res.success(instance);
-	}
+exports.addtpl = function(tpl,fn){
+    //console.log(req.body);
+    //var setid = req.body.setid;
+    models.Template.create(tpl).then(function(instance){
+	if(typeof fn=='function')
+	    fn.call(null,instance);
+    },function(e){
+	console.log(e);
     });
 }
 
@@ -148,7 +151,7 @@ exports.upfile = function(req,res){
     var file = req.files && req.files.upfile;
     
     if(file){
-	res.success({name:file.name,real:path.basename(file.path)});
+	res.success({name:file.name,real:path.basename(file.path),createdAt:new Date()});
     }else{
 	res.error('no file',400);
     }
@@ -197,7 +200,13 @@ AND Companies.reputable = '+tpl.reputableCompany+' AND Companies.`marketcap`> '+
 }
 
 exports.compute = function(req,res){
-    models.CompanySet.findOne(2).then(function(set){
+    if(!req.body.tpl || !req.body.setid){
+	res.error("data empty",400);
+	return;
+    }
+    exports.addtpl(req.body.tpl);
+    
+    models.CompanySet.findOne(req.body.setid).then(function(set){
 	var strIds = JSON.parse(set.companylist).join();
 	var sql = buildquery(strIds);
 	models.sequelize.query(sql).then(function(d){
