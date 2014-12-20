@@ -18,36 +18,38 @@ dbaApp.run(['$rootScope','$location','$http',function($rootScope,$location,$http
 	$rootScope.currentPage = 'step1';
 	
 	$rootScope.constants = {};
-	$rootScope.constants.capitalization = [
+	//marketcap下拉值
+	$rootScope.constants.marketcap = [
 		{
-			"id":1,
-			"text":"options1"
+			"id":100,
+			"text":"100"
 		},
 		{
-			"id":2,
-			"text":"options2"
+			"id":200,
+			"text":"200"
 		},
 		{
-			"id":3,
-			"text":"options3"
+			"id":500,
+			"text":"500"
+		},
+		{
+			"id":1000,
+			"text":"1000"
+		},
+		{
+			"id":2000,
+			"text":"2000"
+		},
+		{
+			"id":3000,
+			"text":"3000"
+		},
+		{
+			"id":10000,
+			"text":"10000"
 		}
 	];
-	
-	$rootScope.constants.dailyTradingVolume = [
-		{
-			"id":1,
-			"text":"options1"
-		},
-		{
-			"id":2,
-			"text":"options2"
-		},
-		{
-			"id":3,
-			"text":"options3"
-		}
-	];
-	
+
 	$rootScope.constants.exchanges = ['US','HK','China','Other'];
 
 }]);

@@ -4,8 +4,8 @@
 	$scope.currentTplInfo = {
 		"tplname":"",
 		"content":{
-			"fraundCompany":"",
-			"affiliations":"",
+			"fraundCompany":"1",
+			"affiliations":"1",
 			"marketCapitalization":"",
 			"dailyTradingVolume":"",
 			"suspiciousAuditor":"",
@@ -46,7 +46,7 @@
 		obj.content.legalAdvisor = transforCheckValue(obj.content.legalAdvisor);
 		obj.content.shortSellable = transforCheckValue(obj.content.shortSellable);
 		obj.content.reputableCompany = transforCheckValue(obj.content.reputableCompany);
-		
+		obj.setId = $routeParams.setid;
 		return obj;
 	}
 
@@ -58,8 +58,8 @@
 			$scope.currentTplInfo = {
 				"tplname":"",
 				"content":{
-					"fraundCompany":"",
-					"affiliations":"",
+					"fraundCompany":"1",
+					"affiliations":"1",
 					"marketCapitalization":"",
 					"dailyTradingVolume":"",
 					"suspiciousAuditor":"",
@@ -82,9 +82,14 @@
 		var obj = transforTplParamsToSubmit(angular.copy($scope.currentTplInfo));
 		obj.saved = bool;
 		
-		$http({method:'POST', url: '/template', data: '', headers : {
-			'Content-Type' : 'application/x-www-form-urlencoded'
-		}}).success(function(data, status, headers, config){
+		$http({
+			method:'POST', 
+			url: '/template', 
+			data: JSON.stringify(obj), 
+			headers : {
+				'Content-Type' : 'application/json'
+			}
+		}).success(function(data, status, headers, config){
 			if(data.success === true ){
 				$location.path('/step3');
 			}else{

@@ -39,7 +39,7 @@
 <!-- company detail begin -->
 
 <div class="panel panel-default mt-lg" ng-show="companyDetailList.length > 0">
-	<div class="panel-heading">Differents between sets</div>
+	<div class="panel-heading">{{(checkedId && compareId && 'Differents between sets') || 'Companies in set'}}</div>
 	<div class="panel-body">
 		<div class="table-responsive table-bordered">
 		   <table class="table table-hover">
@@ -54,8 +54,8 @@
 				 </tr>
 			  </thead>
 			  <tbody>
-				 <tr ng-repeat="list in companyDetailList">
-					<td>{{(list.status == 'plus' && '+') || (list.status == 'minus' && '-') || ''}}</td>
+				 <tr ng-repeat="list in companyDetailList" ng-class="{'info':list.flag == '-1','success':list.flag == '1'}">
+					<td>{{(list.flag == '-1' && '-') || (list.flag == '1' && '+') || ''}}</td>
 					<td>{{list.companyid}}</td>
 					<td><a href="#/company/{{list.companyid}}">{{list.name}}</a></td>
 					<td>{{list.ticker}}</td>
