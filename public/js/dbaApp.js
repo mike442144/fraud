@@ -54,7 +54,7 @@ dbaApp.run(['$rootScope','$location','$http',function($rootScope,$location,$http
 
 }]);
 
-dbaApp.controller('FileUploadController', ['$scope', function($scope) {
+dbaApp.controller('FileUploadController', ['$scope','$http', function($scope,$http) {
   'use strict';
 
   angular.element(document).ready(function() {
@@ -81,6 +81,21 @@ dbaApp.controller('FileUploadController', ['$scope', function($scope) {
 
                 // Upload Completed
                 alert(response);
+				
+				//文件上传成功后，发到服务器，修改对应的数据 /addfile
+				$http({
+					method:'POST', 
+					url: '/template', 
+					data: JSON.stringify(response), 
+					headers : {
+						'Content-Type' : 'application/json'
+					}
+				}).success(function(data, status, headers, config){
+					$scope.$emit('toParentCtrl',JSON.parse(response));  
+				});
+				
+				
+				
             }
         };
 

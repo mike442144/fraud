@@ -11,4 +11,11 @@
 	
 	
 	$scope.init();
+	
+	$scope.$on('toParentCtrl', function(d,data) {  
+        $scope.$apply(function(){
+			$scope.companyInfo.UploadedFiles.push(data.data);
+		});
+		
+    });  
 }]);

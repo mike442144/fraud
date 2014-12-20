@@ -212,10 +212,10 @@
 						<div class="form-group">
 							<button type="button" class="mb-sm btn btn-success ml-lg" ng-click="showTplBtn = true">saveSelections and continue</button>
 							<div ng-show="showTplBtn">
-								<div class="col-sm-6"><input type="text" ng-enter="saveTpl(true)" class="form-control" ng-model="currentTplInfo.saveName" placeholder="input your template name"></div>
+								<div class="col-sm-6"><input type="text" ng-enter="saveTpl(true)" class="form-control" ng-model="currentTplInfo.tplname" placeholder="input your template name"></div>
 								<div class="col-sm-6">
 									<button type="button" class="mb-sm btn btn-primary" ng-click="saveTpl(true)">Save & continue</button>
-									<button type="button" class="mb-sm btn btn-default" ng-click="showTplBtn = false;currentTplInfo.saveName = '';currentTplInfo.save = false">cancel</button>
+									<button type="button" class="mb-sm btn btn-default" ng-click="showTplBtn = false;currentTplInfo.tplname = '';currentTplInfo.save = false">cancel</button>
 								</div>
 							</div>
 						</div>

@@ -9,7 +9,12 @@
 	    }
 	});
     };
-    
+	
+    $scope.$on('toParentCtrl', function(d,data) {  
+        $scope.$apply(function(){
+			$scope.personInfo.UploadedFiles.push(data.data);
+		});
+    });  
     
     $scope.init();
     

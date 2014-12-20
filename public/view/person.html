@@ -82,7 +82,7 @@
 			<h4>Files Uploaded</h4>
 			
 			<ul>
-				<li ng-repeat="list in personInfo.UploadedFiles"><a href="/upfile/{{list.real}}" target="_blank">{{list.name}}</a>({{list.updatedAt}})</li>
+				<li ng-repeat="list in personInfo.UploadedFiles"><a href="/upfile/{{list.real}}" target="_blank">{{list.name}}</a>{{list.updatedAt && '('+list.updatedAt+')' || ''}})</li>
 			</ul>
 			
 			<fieldset ng-controller="FileUploadController">

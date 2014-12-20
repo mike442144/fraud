@@ -46,7 +46,10 @@
 		obj.content.legalAdvisor = transforCheckValue(obj.content.legalAdvisor);
 		obj.content.shortSellable = transforCheckValue(obj.content.shortSellable);
 		obj.content.reputableCompany = transforCheckValue(obj.content.reputableCompany);
-		obj.setId = $routeParams.setid;
+		
+		delete obj.createdAt;
+		delete obj.updatedAt;
+		
 		return obj;
 	}
 
@@ -85,7 +88,7 @@
 		$http({
 			method:'POST', 
 			url: '/template', 
-			data: JSON.stringify(obj), 
+			data: JSON.stringify({setid:$routeParams.setid,tpl:obj}), 
 			headers : {
 				'Content-Type' : 'application/json'
 			}
