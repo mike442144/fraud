@@ -99,15 +99,21 @@ exports.tpl = function(req,res){
 	    saved:true
 	}
     }).success(function(templates){
+	templates.forEach(function(tpl){
+	    tpl.dataValues.content = JSON.parse(tpl.dataValues.content);
+	});
 	res.success(templates);
     });
 }
 
-exports.addtpl = function(req,res){
-    models.Template.create(req.body).success(function(instance){
-	if(instance){
-	    res.success(instance);
-	}
+exports.addtpl = function(tpl,fn){
+    //console.log(req.body);
+    //var setid = req.body.setid;
+    models.Template.create(tpl).then(function(instance){
+	if(typeof fn=='function')
+	    fn.call(null,instance);
+    },function(e){
+	console.log(e);
     });
 }
 
@@ -145,7 +151,7 @@ exports.upfile = function(req,res){
     var file = req.files && req.files.upfile;
     
     if(file){
-	res.success({name:file.name,real:path.basename(file.path)});
+	res.success({name:file.name,real:path.basename(file.path),createdAt:new Date()});
     }else{
 	res.error('no file',400);
     }
@@ -179,22 +185,28 @@ exports.person = function(req,res){
 }
 
 function buildquery(ids,tpl){
-    /*var query = 'SELECT * FROM CompanyPeople INNER JOIN Companies
-ON Companies.`companyid`=CompanyPeople.companycompanyid
-INNER JOIN Stocks
-ON Stocks.`companyid`=Companies.`companyid`
-INNER JOIN Quotes
-ON Quotes.`stockcode`=Stocks.`stockcode`
-WHERE PersonPersonid IN (
-SELECT PersonPersonid FROM CompanyPeople WHERE CompanyCompanyid IN ('+ids+')
-AND degree >= '+tpl.fraudCompany+'
-)
+    var query = 'SELECT * FROM CompanyPeople INNER JOIN Companies\
+ON Companies.`companyid`=CompanyPeople.companycompanyid\
+INNER JOIN Stocks\
+ON Stocks.`companyid`=Companies.`companyid`\
+INNER JOIN Quotes\
+ON Quotes.`stockcode`=Stocks.`stockcode`\
+WHERE PersonPersonid IN (\
+SELECT PersonPersonid FROM CompanyPeople WHERE CompanyCompanyid IN ('+ids+')\
+AND degree >= '+tpl.fraudCompany+'\
+)\
 AND Companies.reputable = '+tpl.reputableCompany+' AND Companies.`marketcap`> '+tpl.marketCapitalization+' AND Stocks.`shortsellable`>='+tpl.shortSellable+' AND Quotes.`volume`>0 AND Stocks.`listed`=1 AND Stocks.`exchange` in ('+tpl.exchange.join()+')';
-    return query;*/
+    return query;
 }
 
 exports.compute = function(req,res){
-    models.CompanySet.findOne(2).then(function(set){
+    if(!req.body.tpl || !req.body.setid){
+	res.error("data empty",400);
+	return;
+    }
+    exports.addtpl(req.body.tpl);
+    
+    models.CompanySet.findOne(req.body.setid).then(function(set){
 	var strIds = JSON.parse(set.companylist).join();
 	var sql = buildquery(strIds);
 	models.sequelize.query(sql).then(function(d){

@@ -49,7 +49,7 @@
 		
 		delete obj.createdAt;
 		delete obj.updatedAt;
-		
+
 		return obj;
 	}
 
@@ -84,11 +84,11 @@
 	$scope.saveTpl = function(bool){
 		var obj = transforTplParamsToSubmit(angular.copy($scope.currentTplInfo));
 		obj.saved = bool;
-		
+	    
 		$http({
 			method:'POST', 
 			url: '/template', 
-			data: JSON.stringify({setid:$routeParams.setid,tpl:obj}), 
+		    data: JSON.stringify({setid:$routeParams.setid,tpl:obj}), 
 			headers : {
 				'Content-Type' : 'application/json'
 			}
