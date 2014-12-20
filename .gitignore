@@ -3,6 +3,7 @@
 *~
 *.csv
 data.txt
+log
 app_data
 result
 node_modules

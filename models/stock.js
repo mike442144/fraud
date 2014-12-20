@@ -14,6 +14,7 @@ module.exports = function(sequelize,DataTypes){
 	end:DataTypes.DATE,
 	sector:DataTypes.STRING,
 	industry:DataTypes.STRING,
+	shortsellable:{type:DataTypes.BOOLEAN,defaultValue:false}
     });
     return Stock;
 };

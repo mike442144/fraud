@@ -1,0 +1,71 @@
+﻿<div class="panel panel-default mt-lg">
+	<div class="panel-heading">Fraund company sets</div>
+	<div class="panel-body">
+		<div class="table-responsive table-bordered">
+		   <table class="table table-hover companyTable">
+			  <thead>
+				 <tr>
+					<th width="40"></th>
+					<th width="100">No</th>
+					<th>Company count</th>
+					<th>Last update</th>
+					<th>Upload Date</th>
+					<th width="110"></th>
+				 </tr>
+			  </thead>
+			  <tbody>
+				 <tr ng-repeat="list in companyList" ng-click="clickTr(list)" ng-class="{'info':list.id == checkedId,'success':compareId == list.id}" ng-mouseover="showCompare(list)" ng-mouseout="hideCompare()">
+					<td>
+						<em class="fa fa-check-square text-primary" ng-show="list.id == checkedId"></em>
+					</td>
+					<td>{{$index+1}}</td>
+					<td>{{list.companyCount}}</td>
+					<td>{{list.lastUpdate | date:'dd/MM/yyyy hh:mm'}}</td>
+					<td>{{list.uploadDate | date:'dd/MM/yyyy hh:mm'}}</td>
+					<td><button type="button" class="btn btn-primary btn-xs" ng-show="(checkedId && checkedId != list.id) && hoverId == list.id" ng-click="compare(list,$event)">compare</button></td>
+				 </tr>
+			  </tbody>
+		   </table>
+		</div>
+		
+		<div class="text-right mv-lg mr">
+			<button type="button" class="btn btn-primary" ng-click="goNext()">next</button>
+		</div>
+	</div>
+	
+</div>
+
+
+<!-- company detail begin -->
+
+<div class="panel panel-default mt-lg" ng-show="companyDetailList.length > 0">
+	<div class="panel-heading">Differents between sets</div>
+	<div class="panel-body">
+		<div class="table-responsive table-bordered">
+		   <table class="table table-hover">
+			  <thead>
+				 <tr>
+					<th width="40"></th>
+					<th width="100">Company ID</th>
+					<th>Name</th>
+					<th>Ticker</th>
+					<th>Market Cap($)</th>
+					<th width="110"></th>
+				 </tr>
+			  </thead>
+			  <tbody>
+				 <tr ng-repeat="list in companyDetailList">
+					<td>{{(list.status == 'plus' && '+') || (list.status == 'minus' && '-') || ''}}</td>
+					<td>{{list.id}}</td>
+					<td><a href="#/person">{{list.name}}</a></td>
+					<td>{{list.ticker}}</td>
+					<td>{{list.marketCap}}</td>
+					<td></td>
+				 </tr>
+			  </tbody>
+		   </table>
+		</div>
+	</div>
+	
+</div>
+<!-- company detail end -->

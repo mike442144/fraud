@@ -20,13 +20,20 @@ fs.readdirSync(__dirname)
     });
 
 //define the relationship for the objects.
-db.Company.hasMany(db.Person,{through:db.CompanyPerson})
-db.Person.hasMany(db.Company,{through:db.CompanyPerson})
-db.Person.hasMany(db.Company,{through:db.BoardMembership})
-db.Company.hasMany(db.Person,{through:db.BoardMembership})
+db.Company.hasMany(db.Person,{through:db.CompanyPerson,as:"Employees"})
+db.Person.hasMany(db.Company,{through:db.CompanyPerson,as:"Companies"})
+db.Person.hasMany(db.Company,{through:db.BoardMembership,as:"Boards"})
+db.Company.hasMany(db.Person,{through:db.BoardMembership,as:"BoardMembers"})
 db.Stock.belongsTo(db.Company,{foreignKey:"companyid"})
+db.Company.hasOne(db.Stock,{foreignKey:"companyid"})
 db.Quote.belongsTo(db.Stock,{foreignKey:"stockcode"})
+db.Stock.hasMany(db.Quote,{foreignKey:"stockcode"})
 
+db.Company.hasMany(db.UploadedFile,{foreignKey:"companyid"})
+db.UploadedFile.belongsTo(db.Company,{foreignKey:"companyid"})
+
+db.Person.hasMany(db.UploadedFile,{foreignKey:'personid'})
+db.UploadedFile.belongsTo(db.Person,{foreignKey:'personid'})
 
 Object.keys(db).forEach(function(modelName) {
     if ("associate" in db[modelName]) {

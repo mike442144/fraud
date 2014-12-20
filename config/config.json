@@ -1,8 +1,8 @@
 {
     "development":{
-	"database":"fraud",
-	"username":"root",
-	"password":"123456",
+	"database":"fraud_management",
+	"username":"mike",
+	"password":"Mike442144",
 	"host":"db-server",
 	"port":3306,
 	"dialect":"mysql"

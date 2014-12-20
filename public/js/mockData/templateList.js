@@ -1,0 +1,25 @@
+﻿{
+	"success":true,
+	"message":"",
+	"data":[
+		{
+			"id":1,
+			"tplname":"loose for fraud",
+			"content":{
+				"fraundCompany":1,
+				"affiliations":1,
+				"marketCapitalization":1,
+				"dailyTradingVolume":2,
+				"suspiciousAuditor":1,
+				"suspiciousFinancialAdvisor":0,
+				"legalAdvisor":0,
+				"shortSellable":1,
+				"reputableCompany":1,
+				"exchange":["US","HK"]
+			},
+			"saved":false,
+			"createdAt":"2014-12-04T11:08:11.000Z",
+			"updatedAt":"2014-12-04T11:08:14.000Z"
+		}
+	]
+}
