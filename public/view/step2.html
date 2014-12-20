@@ -69,7 +69,7 @@
 							<div class="col-sm-6 mt">
 								<div class="col-sm-2">>USD </div>
 								<div class="col-sm-4">
-									<select name="marketCapitalization" ng-model="currentTplInfo.content.marketCapitalization" ng-options="item.id as item.text for item in constants.capitalization">
+									<select name="marketCapitalization" ng-model="currentTplInfo.content.marketCapitalization" ng-options="item.id as item.text for item in constants.marketcap">
 										<option value="" style="display:none"></option>
 										
 									</select>
@@ -85,7 +85,7 @@
 							<div class="col-sm-6 mt">
 								<div class="col-sm-2">>USD </div>
 								<div class="col-sm-4">
-									<select name="dailyTradingVolume" ng-model="currentTplInfo.content.dailyTradingVolume" ng-options="item.id as item.text for item in constants.dailyTradingVolume">
+									<select name="dailyTradingVolume" ng-model="currentTplInfo.content.dailyTradingVolume" ng-options="item.id as item.text for item in constants.marketcap">
 										<option value="" style="display:none"></option>
 									</select>
 								</div>

@@ -34,7 +34,7 @@
 		$event.stopPropagation();
 		
 	    //发ajax请求，获取两个数据比较后的结果  js/mockData/companyDetailList.js
-		$http.get('/compare',{params:{selectedId:$scope.compareId,curId:$scope.compareId}}).success(function(data){
+		$http.get('/compare',{params:{selectedId:$scope.checkedId,curId:$scope.compareId}}).success(function(data){
 			if(data.success === true){
 				$scope.companyDetailList = data.data;//回来的结果和选中一行时共用一个model
 			}
