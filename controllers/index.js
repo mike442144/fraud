@@ -151,7 +151,7 @@ exports.upfile = function(req,res){
     var file = req.files && req.files.upfile;
     
     if(file){
-	res.success({name:file.name,real:path.basename(file.path),createdAt:new Date()});
+	res.success({name:file.name,real:path.basename(file.path),updatedAt:new Date()});
     }else{
 	res.error('no file',400);
     }
@@ -160,8 +160,10 @@ exports.upfile = function(req,res){
 
 exports.addfile = function(req,res){
     var f = req.body;
-    models.UploadedFile.create(f).spread(function(fileinfo,created){
-	if(created){
+    console.log(typeof req.body);
+    
+    models.UploadedFile.create(f).then(function(fileinfo){
+	if(fileinfo && fileinfo.id){
 	    res.success();
 	}else{
 	    res.error("errors occured",500);

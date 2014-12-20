@@ -80,22 +80,17 @@ dbaApp.controller('FileUploadController', ['$scope','$http', function($scope,$ht
                 }, 250);
 
                 // Upload Completed
-                alert(response);
-				
-				//文件上传成功后，发到服务器，修改对应的数据 /addfile
-				$http({
-					method:'POST', 
-					url: '/template', 
-					data: JSON.stringify(response), 
-					headers : {
-						'Content-Type' : 'application/json'
-					}
-				}).success(function(data, status, headers, config){
-					$scope.$emit('toParentCtrl',JSON.parse(response));  
-				});
-				
-				
-				
+		if(typeof response == 'string'){
+		    response = JSON.parse(response);
+		}
+                console.log(response);
+		if(!response.success){
+		    console.log("upload file error: "+response.message);
+		    return;
+		}
+		
+		//文件上传成功后，发到服务器，修改对应的数据 /addfile
+		$scope.$emit('toParentCtrl',response);
             }
         };
 

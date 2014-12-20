@@ -10,10 +10,23 @@
 	});
     };
 	
-    $scope.$on('toParentCtrl', function(d,data) {  
+    $scope.$on('toParentCtrl', function(d,responseData) {  
         $scope.$apply(function(){
-			$scope.personInfo.UploadedFiles.push(data.data);
-		});
+	    //responseData
+	    var obj = responseData.data;
+	    obj.target = 2;
+	    obj.personid=$routeParams.personid;
+	    $http({
+		method:'POST',
+		url: '/addfile',
+		data: JSON.stringify(obj),
+		headers : {
+		    'Content-Type' : 'application/json'
+		}
+	    }).success(function(data, status, headers, config){
+		$scope.personInfo.UploadedFiles.push(obj);
+	    });
+	});
     });  
     
     $scope.init();

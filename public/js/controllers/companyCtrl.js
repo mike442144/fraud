@@ -9,13 +9,25 @@
 		});
 	};
 	
-	
-	$scope.init();
-	
-	$scope.$on('toParentCtrl', function(d,data) {  
+    
+    $scope.init();
+    
+    $scope.$on('toParentCtrl', function(d,responseData) {
         $scope.$apply(function(){
-			$scope.companyInfo.UploadedFiles.push(data.data);
-		});
-		
+	    var obj = responseData.data;
+	    obj.target=1;
+	    obj.companyid=$routeParams.companyid;
+	    
+	    $http({
+		method:'POST',
+		url: '/addfile',
+		data: JSON.stringify(obj),
+		headers : {
+		    'Content-Type' : 'application/json'
+		}
+	    }).success(function(data, status, headers, config){
+		$scope.companyInfo.UploadedFiles.push(obj);
+	    });
+	});
     });  
 }]);
