@@ -106,9 +106,15 @@ exports.tpl = function(req,res){
     });
 }
 
-exports.addtpl = function(tpl,fn){
-    //console.log(req.body);
+exports.logtpl = function(tpl,fn){
+    console.log(tpl);
     //var setid = req.body.setid;
+    if(tpl.id){
+	if(fn)
+	    fn.call(null,tpl);
+	return;
+    }
+    
     models.Template.create(tpl).then(function(instance){
 	if(typeof fn=='function')
 	    fn.call(null,instance);
@@ -151,7 +157,7 @@ exports.upfile = function(req,res){
     var file = req.files && req.files.upfile;
     
     if(file){
-	res.success({name:file.name,real:path.basename(file.path),updatedAt:new Date()});
+	res.success({name:file.name,real:path.basename(file.path)});
     }else{
 	res.error('no file',400);
     }
@@ -164,7 +170,7 @@ exports.addfile = function(req,res){
     
     models.UploadedFile.create(f).then(function(fileinfo){
 	if(fileinfo && fileinfo.id){
-	    res.success();
+	    res.success(fileinfo);
 	}else{
 	    res.error("errors occured",500);
 	}
@@ -187,34 +193,61 @@ exports.person = function(req,res){
 }
 
 function buildquery(ids,tpl){
-    var query = 'SELECT * FROM CompanyPeople INNER JOIN Companies\
-ON Companies.`companyid`=CompanyPeople.companycompanyid\
-INNER JOIN Stocks\
-ON Stocks.`companyid`=Companies.`companyid`\
-INNER JOIN Quotes\
-ON Quotes.`stockcode`=Stocks.`stockcode`\
-WHERE PersonPersonid IN (\
-SELECT PersonPersonid FROM CompanyPeople WHERE CompanyCompanyid IN ('+ids+')\
-AND degree >= '+tpl.fraudCompany+'\
-)\
-AND Companies.reputable = '+tpl.reputableCompany+' AND Companies.`marketcap`> '+tpl.marketCapitalization+' AND Stocks.`shortsellable`>='+tpl.shortSellable+' AND Quotes.`volume`>0 AND Stocks.`listed`=1 AND Stocks.`exchange` in ('+tpl.exchange.join()+')';
+    var query = 'SELECT * FROM CompanyPeople INNER JOIN Companies \
+ON Companies.`companyid`=CompanyPeople.companycompanyid \
+INNER JOIN Stocks \
+ON Stocks.`companyid`=Companies.`companyid` \
+INNER JOIN (SELECT Quotes.`stockcode`,volume,marketcap FROM Quotes \
+INNER JOIN (SELECT Quotes.`stockcode`,MAX(updatedAt) AS lastupdate FROM Quotes GROUP BY Quotes.`stockcode`) AS q \
+ON Quotes.stockcode=q.stockcode AND Quotes.updatedAt = q.lastupdate) AS qq \
+ON qq.`stockcode`=Stocks.`stockcode` \
+WHERE PersonPersonid IN ( \
+SELECT PersonPersonid FROM CompanyPeople WHERE CompanyCompanyid IN ('+ids+') \
+AND degree >= '+tpl.fraudCompany+' \
+) \
+AND Companies.reputable = '+tpl.reputableCompany+' AND qq.`marketcap`> '+tpl.marketCapitalization+' AND Stocks.`shortsellable`>='+tpl.shortSellable+' AND qq.`volume`>'+tpl.dailyTradingVolume+' AND Companies.`listed`=1 AND Stocks.`exchange` in ("'+tpl.exchanges.join("\",\"")+'") AND CompanyPeople.degree>='+tpl.affiliations;
     return query;
 }
 
 exports.compute = function(req,res){
-    if(!req.body.tpl || !req.body.setid){
+    var tpl = req.body.tpl,
+    setid = req.body.setid;
+    
+    if(! tpl|| !setid){
 	res.error("data empty",400);
 	return;
     }
-    exports.addtpl(req.body.tpl);
+    var cnt = tpl.content;
+    tpl.content = JSON.stringify(cnt);
     
-    models.CompanySet.findOne(req.body.setid).then(function(set){
+    exports.logtpl(tpl);
+    
+    var exchanges =[];
+    cnt.exchange.forEach(function(ex){
+	switch(ex){
+	case 'US':
+	    exchanges.push('NasdaqCM','NasdaqGM','NasdaqGS','NYSE');
+	    break;
+	case 'HK':
+	    exchanges.push('SEHK');
+	    break;
+	case 'China':
+	    exchanges.push('SHSE','SZSE');
+	    break;
+	default:
+	    exchanges.push('AIM','AMEX','DB','ENXTAM','OTCBB','OTCPK','SGX','TSE','TSX');
+	    break;
+	}
+    });
+    cnt.exchanges = exchanges;
+    
+    models.CompanySet.findOne(setid).then(function(set){
 	var strIds = JSON.parse(set.companylist).join();
-	var sql = buildquery(strIds);
+	var sql = buildquery(strIds,cnt);
 	models.sequelize.query(sql).then(function(d){
 	    res.success(d);
 	});
     },function(e){
-	res.error(e.message,500);
+	res.error(e.message,404);
     });
 }

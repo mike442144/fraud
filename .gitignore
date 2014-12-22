@@ -13,3 +13,4 @@ node_modules
 *.sln
 *.suo
 obj
+public/upload

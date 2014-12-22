@@ -26,7 +26,7 @@
 		    'Content-Type' : 'application/json'
 		}
 	    }).success(function(data, status, headers, config){
-		$scope.companyInfo.UploadedFiles.push(obj);
+		$scope.companyInfo.UploadedFiles.push(data.data);
 	    });
 	});
     });  

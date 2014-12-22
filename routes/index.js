@@ -19,7 +19,7 @@ router.get('/compare',ctrs.compare);
 
 router.get('/template',ctrs.tpl);
 
-router.post('/template',ctrs.addtpl);
+//router.post('/template',ctrs.addtpl);
 
 router.get('/company/:companyid',ctrs.company);
 

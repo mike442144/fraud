@@ -10,7 +10,7 @@
 	});
     };
 	
-    $scope.$on('toParentCtrl', function(d,responseData) {  
+    $scope.$on('toParentCtrl', function(d,responseData) {
         $scope.$apply(function(){
 	    //responseData
 	    var obj = responseData.data;
@@ -24,7 +24,8 @@
 		    'Content-Type' : 'application/json'
 		}
 	    }).success(function(data, status, headers, config){
-		$scope.personInfo.UploadedFiles.push(obj);
+		console.log(data);
+		$scope.personInfo.UploadedFiles.push(data.data);
 	    });
 	});
     });  

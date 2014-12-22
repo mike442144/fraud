@@ -4,7 +4,7 @@
 	$scope.currentTplInfo = {
 		"tplname":"",
 		"content":{
-			"fraundCompany":"1",
+			"fraudCompany":"1",
 			"affiliations":"1",
 			"marketCapitalization":"",
 			"dailyTradingVolume":"",
@@ -55,29 +55,29 @@
 
 	//点击某一个模板时，获取那个模板信息
 	$scope.selectTpl = function(list){
-		if(!$scope.currentTplInfo || ($scope.currentTplInfo && $scope.currentTplInfo.id != list.id)){
-			$scope.currentTplInfo = angular.copy(list);
-		}else{
-			$scope.currentTplInfo = {
-				"tplname":"",
-				"content":{
-					"fraundCompany":"1",
-					"affiliations":"1",
-					"marketCapitalization":"",
-					"dailyTradingVolume":"",
-					"suspiciousAuditor":"",
-					"suspiciousFinancialAdvisor":"",
-					"legalAdvisor":"",
-					"shortSellable":"",
-					"reputableCompany":"",
-					"exchange":[]// 复选框赋值时需要默认是数组，不然第二次赋值会报错
-				},
-				"saved":false,
-				"createdAt":"",
-				"updatedAt":""
-			};
-		}
-	};
+					  if(!$scope.currentTplInfo || ($scope.currentTplInfo && $scope.currentTplInfo.id != list.id)){
+																       $scope.currentTplInfo = angular.copy(list);
+																      }else{
+																	    $scope.currentTplInfo = {
+																				     "tplname":"",
+																				     "content":{
+																						"fraudCompany":"1",
+																						"affiliations":"1",
+																						"marketCapitalization":"",
+																						"dailyTradingVolume":"",
+																						"suspiciousAuditor":"",
+																						"suspiciousFinancialAdvisor":"",
+																						"legalAdvisor":"",
+																						"shortSellable":"",
+																						"reputableCompany":"",
+																						"exchange":[]// 复选框赋值时需要默认是数组，不然第二次赋值会报错
+																					       },
+																				     "saved":false,
+																				     "createdAt":"",
+																				     "updatedAt":""
+																				    };
+																	   }
+					 };
 	
 	
 	
@@ -87,7 +87,7 @@
 	    
 		$http({
 			method:'POST', 
-			url: '/template', 
+			url: '/compute', 
 		    data: JSON.stringify({setid:$routeParams.setid,tpl:obj}), 
 			headers : {
 				'Content-Type' : 'application/json'
