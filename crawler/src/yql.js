@@ -11,8 +11,7 @@ function genQuery(stocks){
     return new YQL(q);
 }
 
-
-models.Stock.findAll({attribute:['stockcode']}).then(function(stocks){
+models.Stock.findAll({attribute:['stockcode'],limit:200,offset:1800}).then(function(stocks){
     
     genQuery(stocks).exec(function(err, data) {
 	if(!data.query.results){

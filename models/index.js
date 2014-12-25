@@ -35,6 +35,12 @@ db.UploadedFile.belongsTo(db.Company,{foreignKey:"companyid"})
 db.Person.hasMany(db.UploadedFile,{foreignKey:'personid'})
 db.UploadedFile.belongsTo(db.Person,{foreignKey:'personid'})
 
+db.Template.hasMany(db.Result,{foreignKey:"tplid"});
+db.Result.belongsTo(db.Template,{foreignKey:"tplid"});
+
+db.CompanySet.hasMany(db.Result,{foreignKey:"setid"});
+db.Result.belongsTo(db.CompanySet,{foreignKey:"setid"});
+
 Object.keys(db).forEach(function(modelName) {
     if ("associate" in db[modelName]) {
 	db[modelName].associate(db);

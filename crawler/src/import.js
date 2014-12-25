@@ -1,23 +1,73 @@
 var models = require("../../models")
 var fs = require("fs")
-
+var EventEmitter = require('events').EventEmitter;
+var emitter = new EventEmitter();
 var importer = function(){
     this.dataDir = "../data/";
     this.seedPersonFile = "test_seed_person_info.json";
     this.seedCompanyFile = "seed_csr1.json";
-    
+    this.relatedDir = "related/";
+    this.relationDir = "relation/";
+    this.relatedCompanyFiles = [];
+    this.relatedPersonFiles = [];
     this.progress = 1;
+    this.ep = new require("eventproxy")();
+    this.companies = {};
+    this.people = {};
 }
-
+var merge2Objects =function(targetObj,curObj){
+    Object.keys(curObj).reduce(function(pre,cur){
+	pre[cur] = curObj[cur];
+	return pre;
+    },targetObj);
+    return targetObj;
+}
 importer.prototype.init = function(){
     this.seedPerson = JSON.parse(fs.readFileSync(this.dataDir+this.seedPersonFile).toString());
     this.seedCompany = JSON.parse(fs.readFileSync(this.dataDir+this.seedCompanyFile).toString());
+    merge2Objects(this.companies,this.seedCompany);
+    merge2Objects(this.people,this.seedPerson);
+    fs.readdirSync(this.dataDir+this.relatedDir).forEach(function(filename){
+	if(filename.indexOf("csr")>-1){
+	    this.relatedCompanyFiles.push(filename);
+	}else if(filename.indexOf("psr")>-1){
+	    this.relatedPersonFiles.push(filename);
+	}
+    },this);
+    
+    this.relations = fs.readdirSync(this.dataDir+this.relateionDir);
 }
 
 importer.prototype.start = function(){
     this.init();
-    this.createPerson();
-    this.createCompany();
+    this.ep.all("companyDone","personDone",function(){
+	//that.createCompanyPerson(that.people);
+    });
+    emitter.on("companyDone",function(){
+	if(that.relatedCompanyFiles.length>0){
+	    var fname = that.relatedCompanyFiles.shift();
+	    var cp = JSON.parse(fs.readFileSync(that.dataDir+that.relatedDir+fname).toString());
+	    merge2Objects(that.companies,cp);
+	    that.createCompany(cp);
+	}else{
+	    that.ep.emit("companyDone");
+	    that.createStock(that.companies);
+	}
+    });
+    
+    emitter.on("personDone",function(){
+	if(that.relatedPersonFiles.length>0){
+	    var fname = that.relatedPersonFiles.shift();
+	    var p = JSON.parse(fs.readFileSync(that.dataDir+that.relatedDir+fname).toString());
+	    merge2Objects(that.people,p);
+	    that.createPerson(p);
+	}else{
+	    that.ep.emit("personDone");
+	}
+    });
+    
+    this.createPerson(this.seedPerson);
+    this.createCompany(this.seedCompany,true);
 }
 
 importer.prototype.computeDegree = function(title){
@@ -39,10 +89,14 @@ importer.prototype.computeDegree = function(title){
     return result;
 }
 
+importer.prototype.createRelation = function(){
+    
+}
+
 importer.prototype.createCompanyPerson = function(){
-    Object.keys(this.seedPerson).forEach(function(k){
-	var p = this.seedPerson[k];
-	var c = this.seedCompany[p.company_id];
+    Object.keys(this.people).forEach(function(k){
+	var p = this.people[k];
+	var c = this.companies[p.company_id];
 	var dgr = this.computeDegree(p.professional_titles);
 	
 	var record = {
@@ -64,24 +118,28 @@ importer.prototype.createCompanyPerson = function(){
     },this);
 }
 
+//return result which ele in setB but not SetA
 //setB must be the subset of setA
 importer.prototype.subtract = function(setA,setB){
     var addSet = [];
     var i=0,j=0;
     setB.push(50000000000);
+    setA.push(50000000000);
     while(j<setB.length && i<setA.length){
 	if(setA[i]<setB[j]){
 	    addSet.push(setA[i]);
-	}else{
+	    i++;
+	}else if(setA[i]>setB[j]){
 	    j++;
+	}else{
+	    i++;j++;
 	}
-	i++;
     }
     return addSet;
 }
 
-importer.prototype.createStock = function(){
-    var companyids = Object.keys(this.seedCompany);
+importer.prototype.createStock = function(companyObj){
+    var companyids = Object.keys(companyObj);
     companyids.sort(function(a,b){
 	return a-b;
     });
@@ -97,8 +155,8 @@ importer.prototype.createStock = function(){
 	var addSet = that.subtract(companyids,ids);
 	
 	var records = addSet.map(function(id){
-	    var c = that.seedCompany[id];
-	    var islist = c.exchange_ticker!='-',ex,tk,code;
+	    var c = companyObj[id];
+	    var islist = c.exchange_ticker!='-',ex,tk,code,shortsellable=1;
 	    if(islist){
 		var ts = c.exchange_ticker.split(":");
 		ex = ts[0];
@@ -113,23 +171,30 @@ importer.prototype.createStock = function(){
 	    case 'nyse':
 		code = tk;
 		break;
+	    case 'lse':
+		code=tk+'.L';
+		break;
 	    case 'aim':
 	    case 'amex':
 	    case 'db':
 	    case 'enxtam':
 	    case 'otcbb':
-	    case 'otcpk':
 		return null;
 		break;
+	    case 'otcpk':
+		code = tk;
+		break;
 	    case 'sehk':
-		while(tk.length<4){
-		    tk = '0'+tk;
+		code = tk;
+		while(code.length<4){
+		    code = '0'+code;
 		}
-		code = tk+'.HK';
+		code +='.HK';
+		shortsellable=0;
 		break;
 	    case 'sgx':
 	    case 'tse':
-		return null;
+		//return null;
 		break;
 	    case 'shse':
 		code = tk+".SS";
@@ -140,17 +205,22 @@ importer.prototype.createStock = function(){
 	    case 'tsx':
 		code = tk+".TO";
 		break;
+	    default:
+		break;
 	    }
 	    return {
 		stockcode:code,
 		exchange:ex,
 		ticker:tk,
-		companyid:id
+		companyid:id,
+		shortsellable:shortsellable
 	    }
 	}).filter(function(r){
-	    return !!r;
+	    if(r && r.stockcode)
+		return true;
+	    return false;
 	});
-	
+	//console.log(records);
 	models.Stock.bulkCreate(records).then(function(a){
 	    console.log("create stock success, %d",a.length);
 	},function(e){
@@ -159,12 +229,12 @@ importer.prototype.createStock = function(){
     });
 }
 
-importer.prototype.createCompany = function(){
-    var companyids = Object.keys(this.seedCompany);
+importer.prototype.createCompany = function(companyObj,fraud){
+    var companyids = Object.keys(companyObj);
     companyids.sort(function(a,b){
 	return a-b;
     });
-
+    
     models.Company.findAll({
 	where:{companyid:companyids},
 	attributes:['companyid'],
@@ -175,7 +245,7 @@ importer.prototype.createCompany = function(){
 	});
 	var addSet = that.subtract(companyids,ids);
 	var records = addSet.map(function(id){
-	    var c = that.seedCompany[id];
+	    var c = companyObj[id];
 	    var islist = c.exchange_ticker!='-',ex,tk;
 	    if(islist){
 		var ts = c.exchange_ticker.split(":");
@@ -193,21 +263,21 @@ importer.prototype.createCompany = function(){
 		listed:islist,
 		ticker:tk,
 		exchange:ex,
-		fraud:true
+		fraud:!!fraud
 	    };
 	});
 	models.Company.bulkCreate(records).then(function(a){
 	    console.log("create record success, %d",a.length);
-	    that.progress = that.progress | 1;
-	    that.onComplete();
+	    emitter.emit("companyDone");
 	},function(e){
 	    console.log(e);
 	});
     });
 }
 
-importer.prototype.createPerson = function(){
-    var personids = Object.keys(this.seedPerson);
+
+importer.prototype.createPerson = function(people){
+    var personids = Object.keys(people);
     personids.sort(function(a,b){
 	return a-b;
     });
@@ -222,7 +292,7 @@ importer.prototype.createPerson = function(){
 	});
 	var addSet = that.subtract(personids,ids);
 	var records = addSet.map(function(id){
-	    var p = that.seedPerson[id];
+	    var p = people[id];
 	    return {
 		personid:p.person_id,
 		name:p.person_name,
@@ -237,19 +307,11 @@ importer.prototype.createPerson = function(){
 	});
 	models.Person.bulkCreate(records).then(function(a){
 	    console.log("insert record success, %d",a.length);
-	    that.progress = that.progress | (1<<1);
-	    that.onComplete();
+	    emitter.emit("personDone");
 	},function(e){
 	    console.log(e);
 	});
     });
-}
-
-importer.prototype.onComplete = function(){
-    if(this.progress&1 && this.progress&(1<<1)){
-	this.createStock();
-	this.createCompanyPerson();
-    }
 }
 
 var that = new importer();

@@ -1,5 +1,8 @@
 var models = require("../models")
 var path = require('path')
+var emitter = require('events').EventEmitter;
+
+var ctrEmitter = new emitter();
 
 exports.getcompanysets = function(req,res){
     models.CompanySet.findAll({limit:10,order:'createdAt DESC'}).success(function(sets){
@@ -92,7 +95,6 @@ exports.compare = function(req,res){
     }
 }
 
-
 exports.tpl = function(req,res){
     models.Template.findAll({
 	where:{
@@ -106,22 +108,7 @@ exports.tpl = function(req,res){
     });
 }
 
-exports.logtpl = function(tpl,fn){
-    console.log(tpl);
-    //var setid = req.body.setid;
-    if(tpl.id){
-	if(fn)
-	    fn.call(null,tpl);
-	return;
-    }
-    
-    models.Template.create(tpl).then(function(instance){
-	if(typeof fn=='function')
-	    fn.call(null,instance);
-    },function(e){
-	console.log(e);
-    });
-}
+
 
 exports.index = function(req,res){
     res.render('index');
@@ -193,11 +180,12 @@ exports.person = function(req,res){
 }
 
 function buildquery(ids,tpl){
-    var query = 'SELECT * FROM CompanyPeople INNER JOIN Companies \
+    var query = 'SELECT Companies.companyid,CompanyPeople.PersonPersonid AS personid,CompanyPeople.degree,Companies.name AS companyname,Companies.fraud,Companies.reputable,Stocks.shortsellable,CompanyPeople.title \
+FROM CompanyPeople INNER JOIN Companies \
 ON Companies.`companyid`=CompanyPeople.companycompanyid \
-INNER JOIN Stocks \
+LEFT OUTER JOIN Stocks \
 ON Stocks.`companyid`=Companies.`companyid` \
-INNER JOIN (SELECT Quotes.`stockcode`,volume,marketcap FROM Quotes \
+LEFT OUTER JOIN (SELECT Quotes.`stockcode`,volume,marketcap FROM Quotes \
 INNER JOIN (SELECT Quotes.`stockcode`,MAX(updatedAt) AS lastupdate FROM Quotes GROUP BY Quotes.`stockcode`) AS q \
 ON Quotes.stockcode=q.stockcode AND Quotes.updatedAt = q.lastupdate) AS qq \
 ON qq.`stockcode`=Stocks.`stockcode` \
@@ -205,9 +193,150 @@ WHERE PersonPersonid IN ( \
 SELECT PersonPersonid FROM CompanyPeople WHERE CompanyCompanyid IN ('+ids+') \
 AND degree >= '+tpl.fraudCompany+' \
 ) \
-AND Companies.reputable = '+tpl.reputableCompany+' AND qq.`marketcap`> '+tpl.marketCapitalization+' AND Stocks.`shortsellable`>='+tpl.shortSellable+' AND qq.`volume`>'+tpl.dailyTradingVolume+' AND Companies.`listed`=1 AND Stocks.`exchange` in ("'+tpl.exchanges.join("\",\"")+'") AND CompanyPeople.degree>='+tpl.affiliations;
+' +(tpl.reputableCompany?'AND Companies.reputable=0':'')+' AND qq.`marketcap`> '+tpl.marketCapitalization+' AND Stocks.`shortsellable`>='+tpl.shortSellable+/*' AND qq.`volume`>'+tpl.dailyTradingVolume+*/' AND Companies.`listed`=1 AND Stocks.`exchange` in ("'+tpl.exchanges.join("\",\"")+'") AND CompanyPeople.degree>='+tpl.affiliations;
     return query;
 }
+
+var loadResult = function(id){
+    return models.Result.findOne({where:{resultid:id},include:[{
+	model:models.Template,
+	attributes:["id","tplname","content","saved"]
+    },{
+	model:models.CompanySet,
+	attributes:["setid","companycount"]
+    }]});
+}
+
+exports.viewResult = function(req,res){
+    if(!req.params.resultid){
+	res.error("result id should not be empty",400);
+	return;
+    }
+    loadResult(req.params.resultid).then(function(r){
+	r.dataValues.content = JSON.parse(r.content);
+	res.success(r);
+    },function(e){
+	console.log(e);
+	res.error(e,500);
+    });
+}
+var logtpl = function(req,res){
+    var tpl=req.body.tpl,setid=req.body.setid;
+    console.log(tpl);
+    if(tpl.id){
+	ctrEmitter.emit("TplSaved",req,res);
+	return;
+    }
+    tpl.content = JSON.stringify(tpl.content);
+    models.Template.create(tpl).then(function(instance){
+	instance.dataValues.content = JSON.parse(instance.content);
+	req.body.tpl = instance;
+	ctrEmitter.emit("TplSaved",req,res);
+    },function(e){
+	console.log(e);
+	throw e;
+    });
+}
+var filterFromDb =function(req,res){
+    var tpl=req.body.tpl,setid=req.body.setid;
+    if(!tpl || !setid){
+	console.log("server error.");
+	throw "tpl or setid is empty";
+    }
+    var exchanges =[];
+    tpl.content.exchange.forEach(function(ex){
+	switch(ex){
+	case 'US':
+	    exchanges.push('NasdaqCM','NasdaqGM','NasdaqGS','NYSE');
+	case 'HK':
+	    exchanges.push('SEHK');
+	case 'China':
+	    exchanges.push('SHSE','SZSE');
+	case 'Other':
+	    exchanges.push('AIM','AMEX','DB','ENXTAM','OTCBB','OTCPK','SGX','TSE','TSX');
+	    break;
+	default:
+	    break;
+	}
+    });
+    tpl.content.exchanges = exchanges;
+    
+    models.CompanySet.findOne(setid).then(function(set){
+	var strIds = JSON.parse(set.companylist).join();
+	var sql = buildquery(strIds,tpl.content);
+	
+	models.sequelize.query(sql).then(function(result){
+	    //console.log(aggregate(result));
+	    models.Result.create({
+		content:JSON.stringify(result),
+		setid:setid,
+		tplid:tpl.id
+	    }).then(function(r){
+		ctrEmitter.emit("Computed",req,res,r.resultid);
+	    },function(e){
+		throw e;
+	    });
+	});
+    },function(e){
+	console.log(e);
+	throw e;
+    });
+}
+var aggregate = function(items){
+    var hash = items.reduce(function(pre,cur){
+	
+	if(pre[cur.personid]){
+	    if(cur.fraud){
+		pre[cur.personid].fraud.push(cur);
+	    }else{
+		pre[cur.personid].aff.push(cur);
+	    }
+	}else{
+	    if(cur.fraud){
+		pre[cur.personid]={fraud:[cur],aff:[]};
+	    }else{
+		pre[cur.personid]={fraud:[],aff:[cur]};
+	    }
+	}
+	return pre;
+    },{});
+    var result = [];
+    Object.keys(hash).forEach(function(k){
+	if(hash[k].fraud.length+hash[k].aff.length>1){
+	    var record = {};
+
+	    for(var i=0;i<hash[k].fraud.length;i++){
+		for(var j=0;j<hash[k].aff.length;j++){
+		    
+		}
+	    }
+	    
+	    while(i<hash[k].length){
+		if(hash[k][i].fraud){
+		    record.companyid=hash[k][i].companyid;
+		    record.companyname = hash[k][i].name;
+		}
+		result.push(hash[k][i]);
+		i++;
+	    }
+	}
+	delete hash[k];
+    });
+    return result;
+}
+
+var computed = function(req,res,resultid){
+    loadResult(resultid).then(function(r){
+	r.dataValues.content = JSON.parse(r.content);
+	res.success(r);
+    },function(e){
+	console.log(e);
+	res.error(e,500);
+    });
+}
+ctrEmitter.on("TplSaved",filterFromDb);
+ctrEmitter.on("LogTpl",logtpl);
+ctrEmitter.on("Computed",computed);
 
 exports.compute = function(req,res){
     var tpl = req.body.tpl,
@@ -217,37 +346,8 @@ exports.compute = function(req,res){
 	res.error("data empty",400);
 	return;
     }
-    var cnt = tpl.content;
-    tpl.content = JSON.stringify(cnt);
-    
-    exports.logtpl(tpl);
-    
-    var exchanges =[];
-    cnt.exchange.forEach(function(ex){
-	switch(ex){
-	case 'US':
-	    exchanges.push('NasdaqCM','NasdaqGM','NasdaqGS','NYSE');
-	    break;
-	case 'HK':
-	    exchanges.push('SEHK');
-	    break;
-	case 'China':
-	    exchanges.push('SHSE','SZSE');
-	    break;
-	default:
-	    exchanges.push('AIM','AMEX','DB','ENXTAM','OTCBB','OTCPK','SGX','TSE','TSX');
-	    break;
-	}
+    ctrEmitter.once("error",function(e){
+	res.error(e);
     });
-    cnt.exchanges = exchanges;
-    
-    models.CompanySet.findOne(setid).then(function(set){
-	var strIds = JSON.parse(set.companylist).join();
-	var sql = buildquery(strIds,cnt);
-	models.sequelize.query(sql).then(function(d){
-	    res.success(d);
-	});
-    },function(e){
-	res.error(e.message,404);
-    });
+    ctrEmitter.emit("LogTpl",req,res);
 }

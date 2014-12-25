@@ -14,3 +14,5 @@ node_modules
 *.suo
 obj
 public/upload
+crawler/log
+crawler/data
