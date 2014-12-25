@@ -55,29 +55,29 @@
 
 	//点击某一个模板时，获取那个模板信息
 	$scope.selectTpl = function(list){
-					  if(!$scope.currentTplInfo || ($scope.currentTplInfo && $scope.currentTplInfo.id != list.id)){
-																       $scope.currentTplInfo = angular.copy(list);
-																      }else{
-																	    $scope.currentTplInfo = {
-																				     "tplname":"",
-																				     "content":{
-																						"fraudCompany":"1",
-																						"affiliations":"1",
-																						"marketCapitalization":"",
-																						"dailyTradingVolume":"",
-																						"suspiciousAuditor":"",
-																						"suspiciousFinancialAdvisor":"",
-																						"legalAdvisor":"",
-																						"shortSellable":"",
-																						"reputableCompany":"",
-																						"exchange":[]// 复选框赋值时需要默认是数组，不然第二次赋值会报错
-																					       },
-																				     "saved":false,
-																				     "createdAt":"",
-																				     "updatedAt":""
-																				    };
-																	   }
-					 };
+	    if(!$scope.currentTplInfo || ($scope.currentTplInfo && $scope.currentTplInfo.id != list.id)){
+			$scope.currentTplInfo = angular.copy(list);
+			}else{
+				$scope.currentTplInfo = {
+					"tplname":"",
+					"content":{
+						"fraudCompany":"1",
+						"affiliations":"1",
+						"marketCapitalization":"",
+						"dailyTradingVolume":"",
+						"suspiciousAuditor":"",
+						"suspiciousFinancialAdvisor":"",
+						"legalAdvisor":"",
+						"shortSellable":"",
+						"reputableCompany":"",
+						"exchange":[]// 复选框赋值时需要默认是数组，不然第二次赋值会报错
+					},
+					"saved":false,
+					"createdAt":"",
+					"updatedAt":""
+				};
+			}
+	};
 	
 	
 	
@@ -94,7 +94,7 @@
 			}
 		}).success(function(data, status, headers, config){
 			if(data.success === true ){
-				$location.path('/step3');
+				$location.path('/step3/'+data.data);
 			}else{
 				alert('保存失败，请重试！');
 			}
