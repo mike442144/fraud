@@ -34,8 +34,30 @@ importer.prototype.init = function(){
 	    this.relatedPersonFiles.push(filename);
 	}
     },this);
-    
-    this.relations = fs.readdirSync(this.dataDir+this.relateionDir);
+
+    var list = [];
+    this.relations = fs.readdirSync(this.dataDir+this.relationDir).forEach(function(filename){
+	var companyid = filename.replace(/\.json/,'');
+	var r = JSON.parse(fs.readFileSync(this.dataDir+this.relationDir+filename).toString());
+	
+	Object.keys(r.auditor).forEach(function(a){
+	    list.push({
+		companyid:companyid
+		providerid:r.auditor[a].company_id,
+		providername:r.auditor[a].company_name,
+		type:"auditor"
+	    });
+	});
+	
+	Object.keys(r.advisor).forEach(function(a){
+	    list.push({
+		companyid:companyid
+		providerid:r.auditor[a].company_id,
+		providername:r.auditor[a].company_name,
+		type:r.auditor[a].specialty
+	    });
+	});
+    });
 }
 
 importer.prototype.start = function(){
