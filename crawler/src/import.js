@@ -34,30 +34,29 @@ importer.prototype.init = function(){
 	    this.relatedPersonFiles.push(filename);
 	}
     },this);
-
-    var list = [];
-    this.relations = fs.readdirSync(this.dataDir+this.relationDir).forEach(function(filename){
+    this.relations = [];
+    fs.readdirSync(this.dataDir+this.relationDir).forEach(function(filename){
 	var companyid = filename.replace(/\.json/,'');
 	var r = JSON.parse(fs.readFileSync(this.dataDir+this.relationDir+filename).toString());
 	
 	Object.keys(r.auditor).forEach(function(a){
-	    list.push({
-		companyid:companyid
+	    this.relations.push({
+		companyid:companyid,
 		providerid:r.auditor[a].company_id,
 		providername:r.auditor[a].company_name,
 		type:"auditor"
 	    });
-	});
+	},this);
 	
 	Object.keys(r.advisor).forEach(function(a){
-	    list.push({
-		companyid:companyid
-		providerid:r.auditor[a].company_id,
-		providername:r.auditor[a].company_name,
-		type:r.auditor[a].specialty
+	    this.relations.push({
+		companyid:companyid,
+		providerid:r.advisor[a].company_id,
+		providername:r.advisor[a].company_name,
+		type:r.advisor[a].specialty
 	    });
-	});
-    });
+	},this);
+    },this);
 }
 
 importer.prototype.start = function(){
@@ -87,7 +86,7 @@ importer.prototype.start = function(){
 	    that.ep.emit("personDone");
 	}
     });
-    
+    this.createRelation();
     this.createPerson(this.seedPerson);
     this.createCompany(this.seedCompany,true);
 }
@@ -112,7 +111,11 @@ importer.prototype.computeDegree = function(title){
 }
 
 importer.prototype.createRelation = function(){
-    
+    models.CompanyRelationship.bulkCreate(this.relations).then(function(instances){
+	console.log("create company relation success! %d",instances.length);
+    },function(e){
+	console.log(e);
+    });
 }
 
 importer.prototype.createCompanyPerson = function(){

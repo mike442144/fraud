@@ -234,7 +234,7 @@ var logtpl = function(req,res){
 	ctrEmitter.emit("TplSaved",req,res);
     },function(e){
 	console.log(e);
-	throw e;
+	res.error(e);
     });
 }
 var filterFromDb =function(req,res){
@@ -274,12 +274,14 @@ var filterFromDb =function(req,res){
 	    }).then(function(r){
 		ctrEmitter.emit("Computed",req,res,r.resultid);
 	    },function(e){
-		throw e;
+		res.error(e);
+		//ctrEmitter.emit("error",e,req,res);
 	    });
 	});
     },function(e){
 	console.log(e);
-	throw e;
+	res.error(e);
+	//ctrEmitter.emit("error",e,req,res);
     });
 }
 var aggregate = function(items){
@@ -326,17 +328,17 @@ var aggregate = function(items){
 }
 
 var computed = function(req,res,resultid){
-    loadResult(resultid).then(function(r){
-	r.dataValues.content = JSON.parse(r.content);
-	res.success(r);
-    },function(e){
-	console.log(e);
-	res.error(e,500);
-    });
+    res.success(resultid);
 }
+
+var onerror = function(e,req,res){
+    res.error(e);
+}
+
 ctrEmitter.on("TplSaved",filterFromDb);
 ctrEmitter.on("LogTpl",logtpl);
 ctrEmitter.on("Computed",computed);
+ctrEmitter.on('error',onerror);
 
 exports.compute = function(req,res){
     var tpl = req.body.tpl,
@@ -346,8 +348,5 @@ exports.compute = function(req,res){
 	res.error("data empty",400);
 	return;
     }
-    ctrEmitter.once("error",function(e){
-	res.error(e);
-    });
     ctrEmitter.emit("LogTpl",req,res);
 }

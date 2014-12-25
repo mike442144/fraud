@@ -31,4 +31,6 @@ router.get('/person/:personid',ctrs.person);
 
 router.all('/compute',ctrs.compute);
 
+router.get("/viewresult/:resultid",ctrs.viewResult);
+
 module.exports = router;
