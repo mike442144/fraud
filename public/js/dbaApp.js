@@ -7,7 +7,7 @@ dbaApp.config(['$routeProvider', '$locationProvider',function($routeProvider, $l
     $routeProvider.
         when('/step1', {templateUrl:'view/step1.html', controller:'StepOneCtrl'}).
         when('/step2/:setid', {templateUrl:'view/step2.html', controller:'StepTwoCtrl'}).
-        when('/step3', {templateUrl:'view/step3.html', controller:'StepThreeCtrl'}).
+        when('/step3/:resultid', {templateUrl:'view/step3.html', controller:'StepThreeCtrl'}).
         when('/detail/:id', {templateUrl:'view/detail.html', controller:'DetailCtrl'}).
 		when('/person/:personid', {templateUrl:'view/person.html', controller:'PersonCtrl'}).
 		when('/company/:companyid', {templateUrl:'view/company.html', controller:'CompanyCtrl'}).
