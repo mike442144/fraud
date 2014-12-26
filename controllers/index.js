@@ -180,9 +180,10 @@ exports.person = function(req,res){
 }
 
 function buildquery(ids,tpl){
-    var query = 'SELECT Companies.companyid,CompanyPeople.PersonPersonid AS personid,CompanyPeople.degree,Companies.name AS companyname,Companies.fraud,Companies.reputable,Stocks.shortsellable,CompanyPeople.title \
+    var query = 'SELECT Companies.companyid,CompanyPeople.PersonPersonid AS personid,People.name AS personname,CompanyPeople.degree,Companies.name AS companyname,Companies.fraud,Companies.reputable,Stocks.shortsellable,CompanyPeople.title \
 FROM CompanyPeople INNER JOIN Companies \
 ON Companies.`companyid`=CompanyPeople.companycompanyid \
+INNER JOIN People ON People.`personid`=CompanyPeople.personpersonid \
 LEFT OUTER JOIN Stocks \
 ON Stocks.`companyid`=Companies.`companyid` \
 LEFT OUTER JOIN (SELECT Quotes.`stockcode`,volume,marketcap FROM Quotes \
@@ -195,6 +196,25 @@ AND degree >= '+tpl.fraudCompany+' \
 ) \
 ' +(tpl.reputableCompany?'AND Companies.reputable=0':'')+' AND qq.`marketcap`> '+tpl.marketCapitalization+' AND Stocks.`shortsellable`>='+tpl.shortSellable+/*' AND qq.`volume`>'+tpl.dailyTradingVolume+*/' AND Companies.`listed`=1 AND Stocks.`exchange` in ("'+tpl.exchanges.join("\",\"")+'") AND CompanyPeople.degree>='+tpl.affiliations;
     return query;
+}
+
+function buildquery2(ids,tpl){
+    var query = 'SELECT Companies.companyid,CompanyPeople.PersonPersonid AS personid,People.name AS personname,CompanyPeople.degree,Companies.name AS companyname,Companies.fraud,Companies.reputable,Stocks.shortsellable,CompanyPeople.title,Companies.marketcap AS marketcap,qq.volume,Stocks.`exchange` \
+FROM CompanyPeople INNER JOIN Companies \
+ON Companies.`companyid`=CompanyPeople.companycompanyid \
+INNER JOIN People ON People.`personid`=CompanyPeople.personpersonid \
+LEFT OUTER JOIN Stocks \
+ON Stocks.`companyid`=Companies.`companyid` \
+LEFT OUTER JOIN (SELECT Quotes.`stockcode`,volume,marketcap FROM Quotes \
+INNER JOIN (SELECT Quotes.`stockcode`,MAX(updatedAt) AS lastupdate FROM Quotes GROUP BY Quotes.`stockcode`) AS q \
+ON Quotes.stockcode=q.stockcode AND Quotes.updatedAt = q.lastupdate) AS qq \
+ON qq.`stockcode`=Stocks.`stockcode` \
+WHERE PersonPersonid IN ( \
+SELECT PersonPersonid FROM CompanyPeople WHERE CompanyCompanyid IN ('+ids+') \
+AND degree >= '+tpl.fraudCompany+' \
+) \
+'
+    return query;//INNER JOIN ('+ids+') AS fraud ON fraud. \
 }
 
 var loadResult = function(id){
@@ -212,8 +232,9 @@ exports.viewResult = function(req,res){
 	res.error("result id should not be empty",400);
 	return;
     }
+    //console.log(aggregate(result));
     loadResult(req.params.resultid).then(function(r){
-	r.dataValues.content = JSON.parse(r.content);
+	r.dataValues.content = aggregate(JSON.parse(r.content));
 	res.success(r);
     },function(e){
 	console.log(e);
@@ -263,10 +284,18 @@ var filterFromDb =function(req,res){
     
     models.CompanySet.findOne(setid).then(function(set){
 	var strIds = JSON.parse(set.companylist).join();
-	var sql = buildquery(strIds,tpl.content);
+	var sql = buildquery2(strIds,tpl.content);
 	
-	models.sequelize.query(sql).then(function(result){
-	    //console.log(aggregate(result));
+	models.sequelize.query(sql).then(function(records){
+	    var result = records.filter(function(item){
+		if(item.fraud)
+		    return true;
+		if(tpl.content.reputableCompany==1 && item.reputable==1){
+		    return false;
+		}
+		return item.degree>=tpl.content.affiliations&&item.shortsellable>=tpl.content.shortSellable&&item.marketcap>tpl.content.marketCapitalization&&tpl.content.exchanges.some(function(ex){return item.exchange==ex;});
+	    });
+	    console.log("%d, %d",records.length,result.length);
 	    models.Result.create({
 		content:JSON.stringify(result),
 		setid:setid,
@@ -286,7 +315,6 @@ var filterFromDb =function(req,res){
 }
 var aggregate = function(items){
     var hash = items.reduce(function(pre,cur){
-	
 	if(pre[cur.personid]){
 	    if(cur.fraud){
 		pre[cur.personid].fraud.push(cur);
@@ -299,32 +327,19 @@ var aggregate = function(items){
 	    }else{
 		pre[cur.personid]={fraud:[],aff:[cur]};
 	    }
+	    pre[cur.personid].personname = cur.personname;
 	}
+	delete cur.personid;
+	delete cur.personname;
 	return pre;
     },{});
-    var result = [];
-    Object.keys(hash).forEach(function(k){
-	if(hash[k].fraud.length+hash[k].aff.length>1){
-	    var record = {};
-
-	    for(var i=0;i<hash[k].fraud.length;i++){
-		for(var j=0;j<hash[k].aff.length;j++){
-		    
-		}
-	    }
-	    
-	    while(i<hash[k].length){
-		if(hash[k][i].fraud){
-		    record.companyid=hash[k][i].companyid;
-		    record.companyname = hash[k][i].name;
-		}
-		result.push(hash[k][i]);
-		i++;
-	    }
-	}
-	delete hash[k];
+    
+    return Object.keys(hash).filter(function(k){
+	return hash[k].fraud.length+hash[k].aff.length>1;
+    }).map(function(k){
+	hash[k].personid=k;
+	return hash[k];
     });
-    return result;
 }
 
 var computed = function(req,res,resultid){

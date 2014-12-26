@@ -5,11 +5,12 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
-      "express":"*",
-      "connect":"*",
-      "mysql":"*",
-      "sequelize":"*",
-      "body-parser":"*",
-      "connect-multiparty":"*"
+    "body-parser": "*",
+    "connect": "*",
+    "connect-multiparty": "*",
+    "eventproxy": "^0.3.1",
+    "express": "*",
+    "mysql": "*",
+    "sequelize": "*"
   }
 }
