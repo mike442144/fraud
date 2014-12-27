@@ -111,6 +111,12 @@ dbaApp.controller('FileUploadController', ['$scope','$http', function($scope,$ht
     }
   };
 }); */
+dbaApp.filter('offset', function() { 
+	return function(input, start) {
+		start = parseInt(start, 10);
+		return input.slice(start);
+	};
+});
 
 dbaApp.directive('ngEnter', function () {
     return function (scope, element, attrs) {
