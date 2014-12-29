@@ -199,16 +199,12 @@ AND degree >= '+tpl.fraudCompany+' \
 }
 
 function buildquery2(ids,tpl){
-    var query = 'SELECT Companies.companyid,CompanyPeople.PersonPersonid AS personid,People.name AS personname,CompanyPeople.degree,Companies.name AS companyname,Companies.fraud,Companies.reputable,Stocks.shortsellable,CompanyPeople.title,Companies.marketcap AS marketcap,qq.volume,Stocks.`exchange` \
+    var query = 'SELECT Companies.companyid,CompanyPeople.PersonPersonid AS personid,People.name AS personname,CompanyPeople.degree,Companies.name AS companyname,Companies.fraud,Companies.reputable,Stocks.shortsellable,CompanyPeople.title,Companies.marketcap AS marketcap,Stocks.`exchange` \
 FROM CompanyPeople INNER JOIN Companies \
 ON Companies.`companyid`=CompanyPeople.companycompanyid \
 INNER JOIN People ON People.`personid`=CompanyPeople.personpersonid \
 LEFT OUTER JOIN Stocks \
 ON Stocks.`companyid`=Companies.`companyid` \
-LEFT OUTER JOIN (SELECT Quotes.`stockcode`,volume,marketcap FROM Quotes \
-INNER JOIN (SELECT Quotes.`stockcode`,MAX(updatedAt) AS lastupdate FROM Quotes GROUP BY Quotes.`stockcode`) AS q \
-ON Quotes.stockcode=q.stockcode AND Quotes.updatedAt = q.lastupdate) AS qq \
-ON qq.`stockcode`=Stocks.`stockcode` \
 WHERE PersonPersonid IN ( \
 SELECT PersonPersonid FROM CompanyPeople WHERE CompanyCompanyid IN ('+ids+') \
 AND degree >= '+tpl.fraudCompany+' \
@@ -226,23 +222,29 @@ var loadResult = function(id){
 	attributes:["setid","companycount"]
     }]});
 }
-
+var nodeExcel = require("excel-export")
 exports.exportresult = function(req,res){
     if(!req.params.resultid){
 	res.error("result id should not be empty",400);
 	return;
     }
     loadResult(req.params.resultid).then(function(r){
+	var cnf = {};
+	cnf.cols=[{caption:"companyid",type:"string"},{caption:"personid",type:"string"},{caption:"personname",type:"string"},{caption:"degree",type:"number"},{caption:"companyname",type:"string"},{caption:"fraud",type:"number"},{caption:"reputable",type:"number"},{caption:"shortsellable",type:"number"},{caption:"Titles",type:"string"},{caption:"marketcap",type:"number"},{caption:"exchange",type:"string"}];
+	
 	var cnt = JSON.parse(r.content).map(function(record){
 	    return Object.keys(record).map(function(k){
 		return record[k];
-	    }).join("\t");
-	}).join("\r\n");
+	    });///.join();
+	});//.join("\r\n");
+	console.log(cnt);
+	cnf.rows=cnt;
 	res.writeHead(200, {
-            'Content-Type': 'text/plain',
-            'Content-Length': Buffer.byteLength(cnt)
+            'Content-Type': 'application/vnd.openxmlformats',
+	    'Content-disposition': 'attachment;filename=result.xlsx'
 	});
-	res.end(cnt);
+	var result = nodeExcel.execute(cnf);
+	res.end(result,'binary');
     },function(e){
 	console.log(e);
 	res.error(e,500);
@@ -318,6 +320,7 @@ var filterFromDb =function(req,res){
 		return item.degree>=tpl.content.affiliations&&item.shortsellable>=tpl.content.shortSellable&&item.marketcap>tpl.content.marketCapitalization&&tpl.content.exchanges.some(function(ex){return item.exchange==ex;});
 	    });
 	    console.log("%d, %d",records.length,result.length);
+	    
 	    models.Result.create({
 		content:JSON.stringify(result),
 		setid:setid,
@@ -335,7 +338,8 @@ var filterFromDb =function(req,res){
 	//ctrEmitter.emit("error",e,req,res);
     });
 }
-var aggregate = function(items){
+
+var hashperson = function(items){
     var hash = items.reduce(function(pre,cur){
 	if(pre[cur.personid]){
 	    if(cur.fraud){
@@ -355,6 +359,11 @@ var aggregate = function(items){
 	delete cur.personname;
 	return pre;
     },{});
+    return hash;
+}
+
+var aggregate = function(items){
+    var hash = hashperson(items);
     
     return Object.keys(hash).filter(function(k){
 	return hash[k].fraud.length+hash[k].aff.length>1;

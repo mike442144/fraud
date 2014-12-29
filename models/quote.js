@@ -8,6 +8,8 @@ module.exports = function(sequelize,DataTypes){
 	volume:DataTypes.DECIMAL(10,2),
 	ticker:DataTypes.STRING,
 	marketcap:DataTypes.DECIMAL(10,2),
+	currency:DataTypes.STRING,
+	marketcapusd:DataTypes.DECIMAL(10,2),
 	peratio:DataTypes.DECIMAL(10,2),
 	pegratio:DataTypes.DECIMAL(10,2),
 	change:DataTypes.DECIMAL(10,2),

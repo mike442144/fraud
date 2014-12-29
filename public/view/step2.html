@@ -17,12 +17,12 @@
 	<div class="col-sm-6">
 		<!-- START panel-->
 		<div class="panel panel-default">
-			<div class="panel-body" style="height:434px">
+			<div class="panel-body" style="height:273px;">
 				<div class="form-horizontal">
 					<fieldset>
 						<legend>Fraud Management:</legend>
 						<div>
-							<div class="ml"><label>Degree of importance for fraud company</label></div>
+							<div class="ml"><label>Importance for fraud company</label></div>
 							<div class="col-sm-12 ml-xl">
 								<label class="radio-inline c-radio mr-xl">
 									<input type="radio" name="fraudCompany" value="1" ng-model="currentTplInfo.content.fraudCompany" />
@@ -37,7 +37,7 @@
 						</div>
 					</fieldset>
 					<fieldset>
-						<div class="ml"><label>Degree of importance for affiliations</label></div>
+						<div class="ml"><label>Importance for affiliations</label></div>
 						<div class="col-sm-12 ml-xl">
 							<label class="radio-inline c-radio mr-xl">
 								<input type="radio" name="affiliations" value="1" ng-model="currentTplInfo.content.affiliations" />
@@ -59,7 +59,7 @@
 	<div class="col-sm-6">
 		<!-- START panel-->
 		<div class="panel panel-default">
-			<div class="panel-body">
+			<div class="panel-body" style="height:273px;">
 			 
 				<div class="form-horizontal">
 					<fieldset>
@@ -74,12 +74,12 @@
 										
 									</select>
 								</div>
-								<div class="col-sm-2 ml">MIN</div>
+								<div class="col-sm-2 ml">MN</div>
 							</div>
 						</div>
 					</fieldset>
 					
-					<fieldset>
+					<!--<fieldset>
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Daily Trading Volume:</label>
 							<div class="col-sm-6 mt">
@@ -89,12 +89,12 @@
 										<option value="" style="display:none"></option>
 									</select>
 								</div>
-								<div class="col-sm-2 ml">MIN</div>
+								<div class="col-sm-2 ml">MN</div>
 							</div>
 						</div>
-					</fieldset>
+					</fieldset>-->
 					
-					<fieldset>
+					<!--<fieldset>
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Suspicious Auditor:</label>
 							<div class="col-sm-6">
@@ -107,9 +107,9 @@
 								
 							</div>
 						</div>
-					</fieldset>
+					</fieldset>-->
 					
-					<fieldset>
+					<!--<fieldset>
 						<div class="form-group">
 							<label class="col-sm-6 control-label">Suspicious Financial Advisor:</label>
 							<div class="col-sm-6">
@@ -135,7 +135,7 @@
 								</div>
 							</div>
 						</div>
-					</fieldset>
+					</fieldset>-->
 				</div>
 			 
 			 </div>
@@ -210,7 +210,7 @@
 					
 					<fieldset>
 						<div class="form-group">
-							<button type="button" class="mb-sm btn btn-success ml-lg" ng-click="showTplBtn = true">saveSelections and continue</button>
+							<button type="button" class="mb-sm btn btn-success ml-lg" ng-click="showTplBtn = true">Save selections and continue</button>
 							<div ng-show="showTplBtn">
 								<div class="col-sm-6"><input type="text" ng-enter="saveTpl(true)" class="form-control" ng-model="currentTplInfo.tplname" placeholder="input your template name"></div>
 								<div class="col-sm-6">
