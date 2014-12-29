@@ -1,230 +1,230 @@
 ﻿
 <!-- Existin Template begin -->
 <div class="panel panel-default mt-lg">
-	<div class="panel-heading">Select Existed Template:</div>
-	<div class="panel-body">
-		
-		<div class="btn-group">
-			<label ng-model="currentTplInfo.id" ng-repeat="list in templateList" btn-radio="{{list.tplname}}" ng-class="{'active':currentTplInfo.id == list.id}" uncheckable="uncheckable" class="btn btn-success" ng-click="selectTpl(list)">{{list.tplname}}</label>
-		</div>
-		
-	</div>
+  <div class="panel-heading">Select Existed Template:</div>
+  <div class="panel-body">
+    
+    <div class="btn-group">
+      <label ng-model="currentTplInfo.id" ng-repeat="list in templateList" btn-radio="{{list.tplname}}" ng-class="{'active':currentTplInfo.id == list.id}" uncheckable="uncheckable" class="btn btn-success" ng-click="selectTpl(list)">{{list.tplname}}</label>
+    </div>
+    
+  </div>
 </div>
 
 <!-- Existin Template end -->
 
 <div class="row">
-	<div class="col-sm-6">
-		<!-- START panel-->
-		<div class="panel panel-default">
-			<div class="panel-body" style="height:273px;">
-				<div class="form-horizontal">
-					<fieldset>
-						<legend>Fraud Management:</legend>
-						<div>
-							<div class="ml"><label>Importance for fraud company</label></div>
-							<div class="col-sm-12 ml-xl">
-								<label class="radio-inline c-radio mr-xl">
-									<input type="radio" name="fraudCompany" value="1" ng-model="currentTplInfo.content.fraudCompany" />
-									<span class="fa fa-circle"></span>Loose</label>
-								<label class="radio-inline c-radio mr-xl">
-									<input type="radio" name="fraudCompany" value="2" ng-model="currentTplInfo.content.fraudCompany" />
-									<span class="fa fa-circle"></span>Medium</label>
-								<label class="radio-inline c-radio mr-xl">
-									<input type="radio" name="fraudCompany" value="3" ng-model="currentTplInfo.content.fraudCompany" />
-									<span class="fa fa-circle"></span>tight</label>
-							</div>
-						</div>
-					</fieldset>
-					<fieldset>
-						<div class="ml"><label>Importance for affiliations</label></div>
-						<div class="col-sm-12 ml-xl">
-							<label class="radio-inline c-radio mr-xl">
-								<input type="radio" name="affiliations" value="1" ng-model="currentTplInfo.content.affiliations" />
-								<span class="fa fa-circle"></span>Loose</label>
-							<label class="radio-inline c-radio mr-xl">
-								<input type="radio" name="affiliations" value="2" ng-model="currentTplInfo.content.affiliations" />
-								<span class="fa fa-circle"></span>Medium</label>
-							<label class="radio-inline c-radio mr-xl">
-								<input type="radio" name="affiliations" value="3" ng-model="currentTplInfo.content.affiliations" />
-								<span class="fa fa-circle"></span>tight</label>
-						</div>
-					</fieldset>
-				</div>
-			</div>
-		</div>   
+  <div class="col-sm-6">
+    <!-- START panel-->
+    <div class="panel panel-default">
+      <div class="panel-body" style="height:273px;">
+	<div class="form-horizontal">
+	  <fieldset>
+	    <legend>Fraud Management:</legend>
+	    <div>
+	      <div class="ml"><label>Importance for fraud companies</label></div>
+	      <div class="col-sm-12 ml-xl">
+		<label class="radio-inline c-radio mr-xl">
+		  <input type="radio" name="fraudCompany" value="1" ng-model="currentTplInfo.content.fraudCompany" />
+		  <span class="fa fa-circle"></span>Loose</label>
+		<label class="radio-inline c-radio mr-xl">
+		  <input type="radio" name="fraudCompany" value="2" ng-model="currentTplInfo.content.fraudCompany" />
+		  <span class="fa fa-circle"></span>Medium</label>
+		<label class="radio-inline c-radio mr-xl">
+		  <input type="radio" name="fraudCompany" value="3" ng-model="currentTplInfo.content.fraudCompany" />
+		  <span class="fa fa-circle"></span>tight</label>
+	      </div>
+	    </div>
+	  </fieldset>
+	  <fieldset>
+	    <div class="ml"><label>Importance for affiliations</label></div>
+	    <div class="col-sm-12 ml-xl">
+	      <label class="radio-inline c-radio mr-xl">
+		<input type="radio" name="affiliations" value="1" ng-model="currentTplInfo.content.affiliations" />
+		<span class="fa fa-circle"></span>Loose</label>
+	      <label class="radio-inline c-radio mr-xl">
+		<input type="radio" name="affiliations" value="2" ng-model="currentTplInfo.content.affiliations" />
+		<span class="fa fa-circle"></span>Medium</label>
+	      <label class="radio-inline c-radio mr-xl">
+		<input type="radio" name="affiliations" value="3" ng-model="currentTplInfo.content.affiliations" />
+		<span class="fa fa-circle"></span>tight</label>
+	    </div>
+	  </fieldset>
 	</div>
+      </div>
+    </div>   
+  </div>
+  
+  
+  <div class="col-sm-6">
+    <!-- START panel-->
+    <div class="panel panel-default">
+      <div class="panel-body" style="height:273px;">
 	
-	
-	<div class="col-sm-6">
-		<!-- START panel-->
-		<div class="panel panel-default">
-			<div class="panel-body" style="height:273px;">
-			 
-				<div class="form-horizontal">
-					<fieldset>
-						<legend>Affiliations:</legend>
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Market capitalization:</label>
-							<div class="col-sm-6 mt">
-								<div class="col-sm-2">>USD </div>
-								<div class="col-sm-4">
-									<select name="marketCapitalization" ng-model="currentTplInfo.content.marketCapitalization" ng-options="item.id as item.text for item in constants.marketcap">
-										<option value="" style="display:none"></option>
-										
-									</select>
-								</div>
-								<div class="col-sm-2 ml">MN</div>
-							</div>
-						</div>
-					</fieldset>
-					
-					<!--<fieldset>
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Daily Trading Volume:</label>
-							<div class="col-sm-6 mt">
-								<div class="col-sm-2">>USD </div>
-								<div class="col-sm-4">
-									<select name="dailyTradingVolume" ng-model="currentTplInfo.content.dailyTradingVolume" ng-options="item.id as item.text for item in constants.marketcap">
-										<option value="" style="display:none"></option>
-									</select>
-								</div>
-								<div class="col-sm-2 ml">MN</div>
-							</div>
-						</div>
-					</fieldset>-->
-					
-					<!--<fieldset>
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Suspicious Auditor:</label>
-							<div class="col-sm-6">
-								
-								<div class="checkbox c-checkbox needsclick">
-									<label class="needsclick">
-										<input type="checkbox" value="1" class="needsclick" ng-model="currentTplInfo.content.suspiciousAuditor" ng-checked="currentTplInfo.content.suspiciousAuditor">
-										<span class="fa fa-check"></span>Yes</label>
-								</div>
-								
-							</div>
-						</div>
-					</fieldset>-->
-					
-					<!--<fieldset>
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Suspicious Financial Advisor:</label>
-							<div class="col-sm-6">
-								
-								<div class="checkbox c-checkbox needsclick">
-									<label class="needsclick">
-										<input type="checkbox" value="1" class="needsclick" ng-model="currentTplInfo.content.suspiciousFinancialAdvisor" ng-checked="currentTplInfo.content.suspiciousFinancialAdvisor">
-										<span class="fa fa-check"></span>Yes</label>
-								</div>
-							</div>
-						</div>
-					</fieldset>
-					
-					<fieldset>
-						<div class="form-group">
-							<label class="col-sm-6 control-label">Legal Advisor:</label>
-							<div class="col-sm-6">
-								
-								<div class="checkbox c-checkbox needsclick">
-									<label class="needsclick">
-										<input type="checkbox" value="1" class="needsclick" ng-model="currentTplInfo.content.legalAdvisor" ng-checked="currentTplInfo.content.legalAdvisor">
-										<span class="fa fa-check"></span>Yes</label>
-								</div>
-							</div>
-						</div>
-					</fieldset>-->
-				</div>
-			 
-			 </div>
+	<div class="form-horizontal">
+	  <fieldset>
+	    <legend>Affiliations:</legend>
+	    <div class="form-group">
+	      <label class="col-sm-6 control-label">Market Cap:</label>
+	      <div class="col-sm-6 mt">
+		<div class="col-sm-2">>USD </div>
+		<div class="col-sm-4">
+		  <select name="marketCapitalization" ng-model="currentTplInfo.content.marketCapitalization" ng-options="item.id as item.text for item in constants.marketcap">
+		    <option value="" style="display:none"></option>
+		    
+		  </select>
+		</div>
+		<div class="col-sm-2 ml">MN</div>
+	      </div>
+	    </div>
+	  </fieldset>
+	  
+	  <!--<fieldset>
+	      <div class="form-group">
+		<label class="col-sm-6 control-label">Daily Trading Volume:</label>
+		<div class="col-sm-6 mt">
+		  <div class="col-sm-2">>USD </div>
+		  <div class="col-sm-4">
+		    <select name="dailyTradingVolume" ng-model="currentTplInfo.content.dailyTradingVolume" ng-options="item.id as item.text for item in constants.marketcap">
+		      <option value="" style="display:none"></option>
+		    </select>
 		  </div>
-		  <!-- END panel-->
+		  <div class="col-sm-2 ml">MN</div>
+      </div>
+    </div>
+</fieldset>-->
+	  
+	  <!--<fieldset>
+	      <div class="form-group">
+		<label class="col-sm-6 control-label">Suspicious Auditor:</label>
+		<div class="col-sm-6">
+		  
+		  <div class="checkbox c-checkbox needsclick">
+		    <label class="needsclick">
+		      <input type="checkbox" value="1" class="needsclick" ng-model="currentTplInfo.content.suspiciousAuditor" ng-checked="currentTplInfo.content.suspiciousAuditor">
+		      <span class="fa fa-check"></span>Yes</label>
+		  </div>
+		  
+		</div>
+	      </div>
+	  </fieldset>-->
+	  
+	  <!--<fieldset>
+	      <div class="form-group">
+		<label class="col-sm-6 control-label">Suspicious Financial Advisor:</label>
+		<div class="col-sm-6">
+		  
+		  <div class="checkbox c-checkbox needsclick">
+		    <label class="needsclick">
+		      <input type="checkbox" value="1" class="needsclick" ng-model="currentTplInfo.content.suspiciousFinancialAdvisor" ng-checked="currentTplInfo.content.suspiciousFinancialAdvisor">
+		      <span class="fa fa-check"></span>Yes</label>
+		  </div>
+		</div>
+	      </div>
+	  </fieldset>
+	  
+	  <fieldset>
+	    <div class="form-group">
+	      <label class="col-sm-6 control-label">Legal Advisor:</label>
+	      <div class="col-sm-6">
+		
+		<div class="checkbox c-checkbox needsclick">
+		  <label class="needsclick">
+		    <input type="checkbox" value="1" class="needsclick" ng-model="currentTplInfo.content.legalAdvisor" ng-checked="currentTplInfo.content.legalAdvisor">
+		    <span class="fa fa-check"></span>Yes</label>
+		</div>
+	      </div>
+	    </div>
+	  </fieldset>-->
 	</div>
+	
+      </div>
+    </div>
+    <!-- END panel-->
+  </div>
 </div>
 
 <div class="row">
-	<div class="col-sm-6">
-		<!-- START panel-->
-		<div class="panel panel-default">
-			<div class="panel-body">
-				<div class="form-horizontal">
-					<fieldset>
-						<legend>Others:</legend>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Short-sellable:</label>
-							<div class="col-sm-8">
-								
-								<div class="checkbox c-checkbox needsclick">
-									<label class="needsclick">
-										<input type="checkbox" value="1" class="needsclick" ng-model="currentTplInfo.content.shortSellable" ng-checked="currentTplInfo.content.shortSellable">
-										<span class="fa fa-check"></span>Yes</label>
-								</div>
-							</div>
-						</div>
-					</fieldset>
-					
-					<fieldset>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Reputable Company:</label>
-							<div class="col-sm-8">
-								
-								<div class="checkbox c-checkbox needsclick">
-									<label class="needsclick">
-										<input type="checkbox" value="1" class="needsclick" ng-model="currentTplInfo.content.reputableCompany" ng-checked="currentTplInfo.content.reputableCompany">
-										<span class="fa fa-check"></span>Yes</label>
-								</div>
-							</div>
-						</div>
-					</fieldset>
-					
-					<fieldset>
-						<div class="form-group">
-							<label class="col-sm-4 control-label">Exchange:</label>
-							
-							<div class="col-sm-8">
-								<label class="checkbox-inline c-checkbox" ng-repeat="exchange in $parent.constants.exchanges">
-									<input type="checkbox" name="exchange" checklist-model="currentTplInfo.content.exchange" checklist-value="exchange" >
-									<span class="fa fa-check"></span>{{exchange}}</label>
-							</div>
-						</div>
-					</fieldset>
-				</div>
-			</div>
+  <div class="col-sm-6">
+    <!-- START panel-->
+    <div class="panel panel-default">
+      <div class="panel-body">
+	<div class="form-horizontal">
+	  <fieldset>
+	    <legend>Others:</legend>
+	    <div class="form-group">
+	      <label class="col-sm-4 control-label">Short-sellable:</label>
+	      <div class="col-sm-8">
+		
+		<div class="checkbox c-checkbox needsclick">
+		  <label class="needsclick">
+		    <input type="checkbox" value="1" class="needsclick" ng-model="currentTplInfo.content.shortSellable" ng-checked="currentTplInfo.content.shortSellable">
+		    <span class="fa fa-check"></span>Yes</label>
 		</div>
-	</div>
-	
-	
-	<div class="col-sm-6">
-		<!-- START panel-->
-		<div class="panel panel-default">
-			<div class="panel-body" style="height:290px">
-				<div class="form-horizontal">
-					<fieldset>
-						<legend><button type="button" class="mb-sm btn btn-primary" ng-click="saveTpl(false)">Next</button></legend>
-						<div class="form-group">
-							<h1 class="text-gray text-left ml">OR</h1>
-						</div>
-					</fieldset>
-					
-					<fieldset>
-						<div class="form-group">
-							<button type="button" class="mb-sm btn btn-success ml-lg" ng-click="showTplBtn = true">Save selections and continue</button>
-							<div ng-show="showTplBtn">
-								<div class="col-sm-6"><input type="text" ng-enter="saveTpl(true)" class="form-control" ng-model="currentTplInfo.tplname" placeholder="input your template name"></div>
-								<div class="col-sm-6">
-									<button type="button" class="mb-sm btn btn-primary" ng-click="saveTpl(true)">Save & continue</button>
-									<button type="button" class="mb-sm btn btn-default" ng-click="showTplBtn = false;currentTplInfo.tplname = '';currentTplInfo.save = false">cancel</button>
-								</div>
-							</div>
-						</div>
-					</fieldset>
-				</div>
-			</div>
+	      </div>
+	    </div>
+	  </fieldset>
+	  
+	  <fieldset>
+	    <div class="form-group">
+	      <label class="col-sm-4 control-label">Whether striping out reputable companies:</label>
+	      <div class="col-sm-8">
+		
+		<div class="checkbox c-checkbox needsclick">
+		  <label class="needsclick">
+		    <input type="checkbox" value="1" class="needsclick" ng-model="currentTplInfo.content.reputableCompany" ng-checked="currentTplInfo.content.reputableCompany">
+		    <span class="fa fa-check"></span>Yes</label>
 		</div>
-		<!-- END panel-->
+	      </div>
+	    </div>
+	  </fieldset>
+	  
+	  <fieldset>
+	    <div class="form-group">
+	      <label class="col-sm-4 control-label">Exchange:</label>
+	      
+	      <div class="col-sm-8">
+		<label class="checkbox-inline c-checkbox" ng-repeat="exchange in $parent.constants.exchanges">
+		  <input type="checkbox" name="exchange" checklist-model="currentTplInfo.content.exchange" checklist-value="exchange" >
+		  <span class="fa fa-check"></span>{{exchange}}</label>
+	      </div>
+	    </div>
+	  </fieldset>
 	</div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <div class="col-sm-6">
+    <!-- START panel-->
+    <div class="panel panel-default">
+      <div class="panel-body" style="height:290px">
+	<div class="form-horizontal">
+	  <fieldset>
+	    <legend><button type="button" class="mb-sm btn btn-primary" ng-click="saveTpl(false)">Next</button></legend>
+	    <div class="form-group">
+	      <h1 class="text-gray text-left ml">OR</h1>
+	    </div>
+	  </fieldset>
+	  
+	  <fieldset>
+	    <div class="form-group">
+	      <button type="button" class="mb-sm btn btn-success ml-lg" ng-click="showTplBtn = true">Save selections and continue</button>
+	      <div ng-show="showTplBtn">
+		<div class="col-sm-6"><input type="text" ng-enter="saveTpl(true)" class="form-control" ng-model="currentTplInfo.tplname" placeholder="input your template name"></div>
+		<div class="col-sm-6">
+		  <button type="button" class="mb-sm btn btn-primary" ng-click="saveTpl(true)">Save & continue</button>
+		  <button type="button" class="mb-sm btn btn-default" ng-click="showTplBtn = false;currentTplInfo.tplname = '';currentTplInfo.save = false">cancel</button>
+		</div>
+	      </div>
+	    </div>
+	  </fieldset>
+	</div>
+      </div>
+    </div>
+    <!-- END panel-->
+  </div>
 </div>
-		
-		
+
+

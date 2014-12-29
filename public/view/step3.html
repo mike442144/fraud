@@ -6,24 +6,24 @@
                <small>Column Ordering</small>
             </div>
             <div class="panel-body">
-				<div class="row">
-					<div class="form-group col-xs-6">
-						<div class="">
-							<div class="checkbox c-checkbox">
-								<label>
-									<input type="checkbox" ng-model="showFraudBg">
-									<span class="fa fa-check"></span>display fraud</label>
-							</div>
-					  </div>
-					</div>
-					<div class="col-xs-6 text-right" style="height:41px;line-height:41px;">
-						<label class="text-normal">Number of affiliations：{{totalRecords}}</label>
-					
-					</div>
-					
-					
-				</div>
-			
+	      <div class="row">
+		<div class="form-group col-xs-6">
+		  <div class="">
+		    <div class="checkbox c-checkbox">
+		      <label>
+			<input type="checkbox" ng-model="showFraudBg">
+			<span class="fa fa-check"></span>Show Seed Companies</label>
+		      </div>
+		      </div>
+		  </div>
+		<div class="col-xs-6 text-right" style="height:41px;line-height:41px;">
+		  <label class="text-normal">Number of Results：{{totalRecords}}</label>
+		  
+		  </div>
+		
+		
+		</div>
+	      
                <table id="datatable2" class="table table-striped table-hover table-bordered">
                   <thead>
                      <tr>
@@ -33,34 +33,34 @@
                      </tr>
                   </thead>
                   <tbody ng-repeat="list in resultList">
-					<tr>
-						<td ng-hide="list.aff.length == 0 && !showFraudBg" rowspan="{{list.fraud.length + list.aff.length}}"><a ng-href="/person/{{list.personid}}">{{list.personname}}</a></td>
-						
-						<td class="danger" ng-if="list.fraud && list.fraud.length > 0 && showFraudBg">{{list.fraud[0].title}}</td>
-						<td class="danger" ng-if="list.fraud && list.fraud.length > 0  && showFraudBg"><a ng-href="/company/{{list.fraud[0].companyid}}" target="_blank">{{list.fraud[0].companyname}}</a></td>
-						
-						<td ng-if="!list.fraud || list.fraud.length == 0">{{list.aff[0].title}}</td>
-						<td ng-if="!list.fraud || list.fraud.length == 0"><a ng-href="/company/{{list.aff[0].companyid}}" target="_blank">{{list.aff[0].companyname}}</a></td>
-					</tr>
-					
-					<!-- fraud有 那就是fraud 取第二个以后的 aff 直接循环 -->
-					
-					<tr ng-repeat="item in list.fraud" ng-if="list.fraud && list.fraud.length > 0 && !$first && showFraudBg">
-						<td class="danger">{{item.title}}</td>
-                        <td class="danger"><a ng-href="/company/{{item.companyid}}" target="_blank">{{item.companyname}}</a></td>
+		    <tr>
+		      <td ng-hide="list.aff.length == 0 && !showFraudBg" rowspan="{{list.fraud.length + list.aff.length}}"><a ng-href="/#/person/{{list.personid}}">{{list.personname}}</a></td>
+		      
+		      <td class="danger" ng-if="list.fraud && list.fraud.length > 0 && showFraudBg">{{list.fraud[0].title}}</td>
+		      <td class="danger" ng-if="list.fraud && list.fraud.length > 0  && showFraudBg"><a ng-href="/#/company/{{list.fraud[0].companyid}}" target="_blank">{{list.fraud[0].companyname}}</a></td>
+		      
+		      <td ng-if="!list.fraud || list.fraud.length == 0">{{list.aff[0].title}}</td>
+		      <td ng-if="!list.fraud || list.fraud.length == 0"><a ng-href="/#/company/{{list.aff[0].companyid}}" target="_blank">{{list.aff[0].companyname}}</a></td>
+		      </tr>
+		    
+		    <!-- fraud有 那就是fraud 取第二个以后的 aff 直接循环 -->
+		    
+		    <tr ng-repeat="item in list.fraud" ng-if="list.fraud && list.fraud.length > 0 && !$first && showFraudBg">
+		      <td class="danger">{{item.title}}</td>
+                        <td class="danger"><a ng-href="/#/company/{{item.companyid}}" target="_blank">{{item.companyname}}</a></td>
                     </tr>
-					
-					<tr ng-repeat="item in list.aff" ng-if="list.fraud && list.fraud.length > 0">
-						<td>{{item.title}}</td>
-                        <td><a ng-href="/company/{{item.companyid}}" target="_blank">{{item.companyname}}</a></td>
-					</tr>
-					
-					<!-- fraud木有 那就是aff 取第二个以后的 -->
-					
-					<tr ng-repeat="item in list.aff" ng-if="(!list.fraud || list.fraud.length == 0) && !$first">
-						<td>{{item.title}}</td>
-                        <td><a ng-href="/company/{{item.companyid}}" target="_blank">{{item.companyname}}</a></td>
-					</tr>
+		    
+		    <tr ng-repeat="item in list.aff" ng-if="list.fraud && list.fraud.length > 0">
+		      <td>{{item.title}}</td>
+                        <td><a ng-href="/#/company/{{item.companyid}}" target="_blank">{{item.companyname}}</a></td>
+			</tr>
+		    
+		    <!-- fraud木有 那就是aff 取第二个以后的 -->
+		    
+		    <tr ng-repeat="item in list.aff" ng-if="(!list.fraud || list.fraud.length == 0) && !$first">
+		      <td>{{item.title}}</td>
+                        <td><a ng-href="/#/company/{{item.companyid}}" target="_blank">{{item.companyname}}</a></td>
+			</tr>
                   </tbody>
                   <!-- <tfoot>
                      <tr>
@@ -76,66 +76,9 @@
                      </tr>
                   </tfoot> -->
                </table>
-			   
-			</div>
+	          
+	       </div>
          </div>
       </div>
-      <div class="panel-body">
-        <table id="datatable2" class="table table-striped table-hover table-bordered">
-          <thead>
-            <tr>
-              <th>Person</th>
-              <th>Title</th>
-              <th>Company</th>
-            </tr>
-          </thead>
-          <tbody ng-repeat="list in resultList">
-	    <tr>
-	      <td rowspan="{{list.fraud.length + list.aff.length}}"><a target="_blank" ng-href="#/person/{{list.personid}}">{{list.personname}}</a></td>
-	      
-	      <td class="danger" ng-if="list.fraud && list.fraud.length > 0">{{list.fraud[0].title}}</td>
-	      <td class="danger" ng-if="list.fraud && list.fraud.length > 0"><a ng-href="#/company/{{list.fraud[0].companyid}}" target="_blank">{{list.fraud[0].companyname}}</a></td>
-	      
-	      <td ng-if="!list.fraud || list.fraud.length == 0">{{list.aff[0].title}}</td>
-	      <td ng-if="!list.fraud || list.fraud.length == 0"><a ng-href="#/company/{{list.aff[0].companyid}}" target="_blank">{{list.aff[0].companyname}}</a></td>
-	    </tr>
-	    
-	    <!-- fraud有 那就是fraud 取第二个以后的 aff 直接循环 -->
-	    
-	    <tr ng-repeat="item in list.fraud" ng-if="list.fraud && list.fraud.length > 0 && !$first">
-	      <td class="danger">{{item.title}}</td>
-              <td class="danger"><a ng-href="#/company/{{item.companyid}}" target="_blank">{{item.companyname}}</a></td>
-            </tr>
-	    
-	    <tr ng-repeat="item in list.aff" ng-if="list.fraud && list.fraud.length > 0">
-	      <td>{{item.title}}</td>
-              <td><a ng-href="#/company/{{item.companyid}}" target="_blank">{{item.companyname}}</a></td>
-	    </tr>
-	    
-	    <!-- fraud木有 那就是aff 取第二个以后的 -->
-	    
-	    <tr ng-repeat="item in list.aff" ng-if="(!list.fraud || list.fraud.length == 0) && !$first">
-	      <td>{{item.title}}</td>
-              <td><a ng-href="#/company/{{item.companyid}}" target="_blank">{{item.companyname}}</a></td>
-	    </tr>
-          </tbody>
-          <!-- <tfoot>
-               <tr>
-                 <th>
-                   <input type="text" name="filter_fraud_company" placeholder="Filter fraud company" class="form-control input-sm datatable_input_col_search" />
-                 </th>
-                 <th>
-                   <input type="text" name="filter_fraud_title" placeholder="Filter fraud title" class="form-control input-sm datatable_input_col_search" />
-                 </th>
-                 <th>
-                   <input type="text" name="filter_person" placeholder="Filter person" class="form-control input-sm datatable_input_col_search" />
-                 </th>
-               </tr>
-          </tfoot> -->
-        </table>
-	
-      </div>
-    </div>
-  </div>
-</div>
-<!-- END DATATABLE 2 -->
+   </div>
+   <!-- END DATATABLE 2 -->

@@ -41,11 +41,11 @@
 	
 	//处理模板数据(提交时)
 	function transforTplParamsToSubmit(obj){
-		obj.content.suspiciousAuditor = transforCheckValue(obj.content.suspiciousAuditor);
+						/*obj.content.suspiciousAuditor = transforCheckValue(obj.content.suspiciousAuditor);
 		obj.content.suspiciousFinancialAdvisor = transforCheckValue(obj.content.suspiciousFinancialAdvisor);
 		obj.content.legalAdvisor = transforCheckValue(obj.content.legalAdvisor);
 		obj.content.shortSellable = transforCheckValue(obj.content.shortSellable);
-		obj.content.reputableCompany = transforCheckValue(obj.content.reputableCompany);
+		obj.content.reputableCompany = transforCheckValue(obj.content.reputableCompany);*/
 		
 		delete obj.createdAt;
 		delete obj.updatedAt;
