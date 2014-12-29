@@ -89,7 +89,7 @@ importer.prototype.createRelatedCompanyPerson = function(){
 importer.prototype.start = function(){
     this.init();
     this.ep.all("companyDone","personDone",function(){
-	//that.createRelation();
+	that.createRelation();
 	that.createSeedCompanyPerson(that.seedPerson);
 	that.createRelatedCompanyPerson();
     });
