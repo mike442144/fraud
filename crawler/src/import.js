@@ -160,8 +160,6 @@ importer.prototype.createRelation = function(){
     });
 }
 
-
-
 importer.prototype.createSeedCompanyPerson = function(){
     Object.keys(this.seedPerson).forEach(function(k){
 	var p = this.seedPerson[k];
