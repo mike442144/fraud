@@ -227,6 +227,28 @@ var loadResult = function(id){
     }]});
 }
 
+exports.exportresult = function(req,res){
+    if(!req.params.resultid){
+	res.error("result id should not be empty",400);
+	return;
+    }
+    loadResult(req.params.resultid).then(function(r){
+	var cnt = JSON.parse(r.content).map(function(record){
+	    return Object.keys(record).map(function(k){
+		return record[k];
+	    }).join("\t");
+	}).join("\r\n");
+	res.writeHead(200, {
+            'Content-Type': 'text/plain',
+            'Content-Length': Buffer.byteLength(cnt)
+	});
+	res.end(cnt);
+    },function(e){
+	console.log(e);
+	res.error(e,500);
+    });
+}
+
 exports.viewResult = function(req,res){
     if(!req.params.resultid){
 	res.error("result id should not be empty",400);

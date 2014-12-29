@@ -33,4 +33,6 @@ router.all('/compute',ctrs.compute);
 
 router.get("/viewresult/:resultid",ctrs.viewResult);
 
+router.get("/exportresult/:resultid",ctrs.exportresult);
+
 module.exports = router;

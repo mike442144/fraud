@@ -122,7 +122,9 @@ importer.prototype.start = function(){
 
 importer.prototype.computeDegree = function(title){
     title = title.toLowerCase();
-    var idx = title.indexOf("non-executive director") || title.indexOf("non executive director");
+    var idx = title.indexOf("non-executive director");
+    if(idx==-1)
+	idx = title.indexOf("non executive director");
     if(idx>-1){
 	title = title.split("").splice(idx,22).join("");
     }
