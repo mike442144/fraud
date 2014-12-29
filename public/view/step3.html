@@ -34,7 +34,7 @@
                   </thead>
                   <tbody ng-repeat="list in resultList">
 		    <tr>
-		      <td ng-hide="list.aff.length == 0 && !showFraudBg" rowspan="{{list.fraud.length + list.aff.length}}"><a ng-href="/#/person/{{list.personid}}">{{list.personname}}</a></td>
+		      <td ng-hide="list.aff.length == 0 && !showFraudBg" rowspan="{{list.fraud.length + list.aff.length}}"><a ng-href="/#/person/{{list.personid}}" target="_blank">{{list.personname}}</a></td>
 		      
 		      <td class="danger" ng-if="list.fraud && list.fraud.length > 0 && showFraudBg">{{list.fraud[0].title}}</td>
 		      <td class="danger" ng-if="list.fraud && list.fraud.length > 0  && showFraudBg"><a ng-href="/#/company/{{list.fraud[0].companyid}}" target="_blank">{{list.fraud[0].companyname}}</a></td>
