@@ -6,5 +6,13 @@
 	"host":"db-server",
 	"port":3306,
 	"dialect":"mysql"
+    },
+    "production":{
+	"database":"fraud_management",
+	"username":"mike",
+	"password":"Mike442144",
+	"port":3306,
+	"dialect":"mysql",
+	"host":"rdsvnzckupeoh3tlybgja.mysql.rds.aliyuncs.com"
     }
 }
