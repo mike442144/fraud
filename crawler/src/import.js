@@ -13,7 +13,7 @@ var importer = function(){
     this.progress = 1;
     this.ep = new require("eventproxy")();
     this.companies = {};
-    this.relatedPerson = {};
+    this.people = {};
     this.seedPerson={};
     this.seedCompany={};
     this.relatedPerson=[];
@@ -34,7 +34,7 @@ importer.prototype.init = function(){
     }
     
     merge2Objects(this.companies,this.seedCompany);
-    //merge2Objects(this.people,this.seedPerson);
+    merge2Objects(this.people,this.seedPerson);
     fs.readdirSync(this.dataDir+this.relatedDir).forEach(function(filename){
 	if(filename.indexOf("csr")>-1){
 	    this.relatedCompanyFiles.push(filename);
@@ -90,9 +90,7 @@ importer.prototype.start = function(){
     this.init();
     this.ep.all("companyDone","personDone",function(){
 	that.createRelation();
-	that.createCompanyPerson(that.seedPerson);// link one person to one or more companies
-	that.createCompanyPerson(that.relatedPerson);
-	//that.createRelatedCompanyPerson();
+	that.createCompanyPerson(that.people);// link one person to one or more companies
     });
     
     emitter.on("companyDone",function(){
@@ -111,7 +109,7 @@ importer.prototype.start = function(){
 	if(that.relatedPersonFiles.length>0){
 	    var fname = that.relatedPersonFiles.shift();
 	    var p = JSON.parse(fs.readFileSync(that.dataDir+that.relatedDir+fname).toString());
-	    merge2Objects(that.relatedPerson,p);
+	    merge2Objects(that.people,p);
 	    that.createPerson(p);
 	}else{
 	    that.ep.emit("personDone");
