@@ -207,9 +207,12 @@ LEFT OUTER JOIN Stocks \
 ON Stocks.`companyid`=Companies.`companyid` \
 WHERE PersonPersonid IN ( \
 SELECT PersonPersonid FROM CompanyPeople WHERE CompanyCompanyid IN ('+ids+') \
-AND degree >= '+tpl.fraudCompany+' \
-) \
-'
+AND degree >= '+tpl.fraudCompany+' )'
+    
+    // if(tpl.content.containOthers){
+    // 	query += ' AND Companies.`exchange` NOT IN ('+tpl.exchanges.join('","')+')'
+    // }
+    
     return query;//INNER JOIN ('+ids+') AS fraud ON fraud. \
 }
 
@@ -237,7 +240,7 @@ exports.exportresult = function(req,res){
 		return record[k];
 	    });///.join();
 	});//.join("\r\n");
-	console.log(cnt);
+	//console.log(cnt);
 	cnf.rows=cnt;
 	res.writeHead(200, {
             'Content-Type': 'application/vnd.openxmlformats',
@@ -288,38 +291,76 @@ var filterFromDb =function(req,res){
 	console.log("server error.");
 	throw "tpl or setid is empty";
     }
+    
     var exchanges =[];
-    tpl.content.exchange.forEach(function(ex){
+    var knownExchanges = ["china","hk","us"];
+    var selectedExchanges = tpl.content.exchange.reduce(function(pre,cur){pre[cur.toLowerCase()] = true; return pre;},{});
+    var containOthers = tpl.content.exchange.some(function(ex){
+	return ex.toLowerCase() == 'other';
+    });
+    
+    var fnMap = function(ex){
+	ex = ex.toLowerCase();
 	switch(ex){
-	case 'US':
+	case 'us':
 	    exchanges.push('NasdaqCM','NasdaqGM','NasdaqGS','NYSE');
-	case 'HK':
+	case 'hk':
 	    exchanges.push('SEHK');
-	case 'China':
+	case 'china':
 	    exchanges.push('SHSE','SZSE');
-	case 'Other':
-	    exchanges.push('AIM','AMEX','DB','ENXTAM','OTCBB','OTCPK','SGX','TSE','TSX');
+	case 'other':
+	    exchanges.push('AIM','AMEX','DB','ENXTAM','OTCBB','OTCPK','SGX','TSE','TSX','BSE','SET','HASTC','HOSE');
 	    break;
 	default:
 	    break;
 	}
-    });
+    }
+    
+    if(containOthers){// selected `Other` option
+	//console.log("Contain others exchanges.");
+	knownExchanges.filter(function(ex){return !selectedExchanges[ex];}).forEach(fnMap);
+    }else{
+	//console.log("Do not contain others exchanges.");
+	tpl.content.exchange.forEach(fnMap);
+    }
+
+    //console.log(exchanges);
     tpl.content.exchanges = exchanges;
+    tpl.content.containOthers = containOthers;
     
     models.CompanySet.findOne(setid).then(function(set){
 	var strIds = JSON.parse(set.companylist).join();
 	var sql = buildquery2(strIds,tpl.content);
 	
 	models.sequelize.query(sql).then(function(records){
+	    var exEql = function(item){
+		return function(ex){
+		    return item.exchange.toLowerCase() == ex.toLowerCase();
+		}
+	    }
+	    
+	    var exFunc = function(item){
+		return ( !tpl.content.containOthers && tpl.content.exchanges.some(exEql(item) ) )
+		    || (tpl.content.containOthers && !tpl.content.exchanges.some(exEql(item)) );
+	    }
+	    
 	    var result = records.filter(function(item){
 		if(item.fraud)
 		    return true;
 		if(tpl.content.reputableCompany==1 && item.reputable==1){
 		    return false;
 		}
-		return item.degree>=tpl.content.affiliations&&item.shortsellable>=tpl.content.shortSellable&&item.marketcap>tpl.content.marketCapitalization&&tpl.content.exchanges.some(function(ex){return item.exchange==ex;});
+		
+		return item.degree>=tpl.content.affiliations
+		    && item.shortsellable>=tpl.content.shortSellable
+		    && item.marketcap>tpl.content.marketCapitalization
+		    && exFunc(item);
 	    });
-	    console.log("%d, %d",records.length,result.length);
+	    
+	    // console.log("%d, %d",records.length,result.length);
+	    // console.log(JSON.stringify(records));
+	    // console.log();
+	    // console.log(JSON.stringify(result));
 	    
 	    models.Result.create({
 		content:JSON.stringify(result),
@@ -364,7 +405,7 @@ var hashperson = function(items){
 
 var aggregate = function(items){
     var hash = hashperson(items);
-    
+    //console.log(hash);
     return Object.keys(hash).filter(function(k){
 	return hash[k].fraud.length+hash[k].aff.length>1;
     }).map(function(k){

@@ -89,6 +89,7 @@ importer.prototype.createRelatedCompanyPerson = function(){
 importer.prototype.start = function(){
     this.init();
     this.ep.all("companyDone","personDone",function(){
+	return;
 	that.createRelation();
 	that.createCompanyPerson(that.people);// link one person to one or more companies
     });
@@ -239,20 +240,10 @@ importer.prototype.createStock = function(companyObj){
 	    case 'nasdaqgm':
 	    case 'nasdaqgs':
 	    case 'nyse':
-		code = tk;
-		break;
+	    	code = tk;
+	    	break;
 	    case 'lse':
 		code=tk+'.L';
-		break;
-	    case 'aim':
-	    case 'amex':
-	    case 'db':
-	    case 'enxtam':
-	    case 'otcbb':
-		return null;
-		break;
-	    case 'otcpk':
-		code = tk;
 		break;
 	    case 'sehk':
 		code = tk;
@@ -261,10 +252,6 @@ importer.prototype.createStock = function(companyObj){
 		}
 		code +='.HK';
 		shortsellable=0;
-		break;
-	    case 'sgx':
-	    case 'tse':
-		//return null;
 		break;
 	    case 'shse':
 		code = tk+".SS";
@@ -275,7 +262,18 @@ importer.prototype.createStock = function(companyObj){
 	    case 'tsx':
 		code = tk+".TO";
 		break;
+	    // case 'aim':
+	    // case 'amex':
+	    // case 'db':
+	    // case 'enxtam':
+	    // case 'otcbb':
+	    // case 'otcpk':
+	    // case 'sgx':
+	    // case 'tse':
+	    // 	code = tk;
+	    // 	break;
 	    default:
+		code = [ex,tk].join(":");
 		break;
 	    }
 	    return {
