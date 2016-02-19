@@ -13,7 +13,7 @@ var importer = function(){
     this.progress = 1;
     this.ep = new require("eventproxy")();
     this.companies = {};
-    this.people = {};
+    this.relatedPerson = {};
     this.seedPerson={};
     this.seedCompany={};
     this.relatedPerson=[];
@@ -90,9 +90,11 @@ importer.prototype.start = function(){
     this.init();
     this.ep.all("companyDone","personDone",function(){
 	that.createRelation();
-	that.createSeedCompanyPerson(that.seedPerson);
-	that.createRelatedCompanyPerson();
+	that.createCompanyPerson(that.seedPerson);// link one person to one or more companies
+	that.createCompanyPerson(that.relatedPerson);
+	//that.createRelatedCompanyPerson();
     });
+    
     emitter.on("companyDone",function(){
 	if(that.relatedCompanyFiles.length>0){
 	    var fname = that.relatedCompanyFiles.shift();
@@ -106,14 +108,14 @@ importer.prototype.start = function(){
     });
     
     emitter.on("personDone",function(){
-	//if(that.relatedPersonFiles.length>0){
-	//    var fname = that.relatedPersonFiles.shift();
-	//    var p = JSON.parse(fs.readFileSync(that.dataDir+that.relatedDir+fname).toString());
-	    //merge2Objects(that.people,p);
-	    //that.createPerson(p);
-	//}else{
-	//    that.ep.emit("personDone");
-	//}
+	if(that.relatedPersonFiles.length>0){
+	    var fname = that.relatedPersonFiles.shift();
+	    var p = JSON.parse(fs.readFileSync(that.dataDir+that.relatedDir+fname).toString());
+	    merge2Objects(that.relatedPerson,p);
+	    that.createPerson(p);
+	}else{
+	    that.ep.emit("personDone");
+	}
     });
     
     this.createPerson(this.seedPerson);
@@ -122,14 +124,16 @@ importer.prototype.start = function(){
 
 importer.prototype.computeDegree = function(title){
     title = title.toLowerCase();
-    var idx = title.indexOf("non-executive director");
-    if(idx==-1)
-	idx = title.indexOf("non executive director");
-    if(idx>-1){
-	title = title.split("").splice(idx,22).join("");
-    }
+    var titles = title.split(/(?:,|and)/);
+    var reg = /\bnon\b(?:-\w+)?/i;
+    titles = titles.filter(function(tit){
+	return !reg.test(tit);
+    });
+    
     var checkExists = function(kw){
-	return title.indexOf(kw.toLowerCase())>-1;
+	return titles.some(function(title){
+	    return title.indexOf(kw.toLowerCase())>-1;
+	});
     }
     
     var tight = ['Chief', 'President', 'General Manager', 'Chairman', 'Executive Director', 'Finance', 'Financial', 'Accountant', 'Accounting', 'Investment'],
@@ -155,15 +159,15 @@ importer.prototype.createRelation = function(){
 	},defaults:relation}).then(function(instances){
 	    console.log("create company relation success! %d",instances.length);
 	},function(e){
-	    console.log(e);
+	    console.error(e);
 	});
     });
 }
 
-importer.prototype.createSeedCompanyPerson = function(){
-    Object.keys(this.seedPerson).forEach(function(k){
-	var p = this.seedPerson[k];
-	var c = this.companies[p.company_id];
+importer.prototype.createCompanyPerson = function(people){
+    Object.keys(people).forEach(function(k){
+	var p = people[k];
+	//var c = this.companies[p.company_id];
 	var dgr = this.computeDegree(p.professional_titles);
 	
 	var record = {
@@ -231,6 +235,7 @@ importer.prototype.createStock = function(companyObj){
 	    }else{
 		return null;
 	    }
+	    
 	    switch(ex.toLowerCase()){
 	    case 'nasdaqcm':
 	    case 'nasdaqgm':
@@ -324,7 +329,7 @@ importer.prototype.createCompany = function(companyObj,fraud){
 	    
 	    return {
 		companyid:id,
-		desc:c.bussiness_descriptioh,
+		desc:c.bussiness_description,
 		marketcap:c["market capitalization"],
 		name:c.company_name,
 		listed:islist,
@@ -358,6 +363,10 @@ importer.prototype.createPerson = function(people){
 	    return p.personid;
 	});
 	var addSet = that.subtract(personids,ids);
+	// console.log("exists person count: %d",ids.length);
+	// console.log("total person count: %d",personids.length);
+	// emitter.emit("personDone");
+	// return;
 	var records = addSet.map(function(id){
 	    var p = people[id];
 	    return {
@@ -376,7 +385,7 @@ importer.prototype.createPerson = function(people){
 	models.Person.bulkCreate(records).then(function(a){
 	    console.log("insert record success, %d",a.length);
 	    emitter.emit("personDone");
-	    that.ep.emit("personDone");
+	    //that.ep.emit("personDone");
 	},function(e){
 	    console.log(e);
 	});

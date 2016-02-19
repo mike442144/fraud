@@ -1,9 +1,9 @@
 {
     "development":{
 	"database":"fraud_management",
-	"username":"mike",
-	"password":"Mike442144",
-	"host":"db-server",
+	"username":"root",
+	"password":"xiaokang2015",
+	"host":"bda-server-2",
 	"port":3306,
 	"dialect":"mysql"
     },

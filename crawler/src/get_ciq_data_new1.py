@@ -64,6 +64,7 @@ class CIQ(object):
     re_status_in_name = re.compile(r'\(([A-Z\da-z,\s]+)\)')
 
     def __init__(self, driver_flag=True, **kwargs):
+        return
         self.wait = None
         if driver_flag:
             self.browser = webdriver.Chrome(os.path.join(BASE_DIR, 'scraper/driver/chromedriver.exe'))   # 打开浏览器
@@ -1044,6 +1045,7 @@ def run():
     本文件执行的入口
     """
     ciq = CIQ()
+    ciq.parse_person_info(1,False)
     ciq._clear_stage_file()
     while True:
         try:        
