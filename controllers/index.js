@@ -268,6 +268,7 @@ exports.viewResult = function(req,res){
 	res.error(e,500);
     });
 }
+
 var logtpl = function(req,res){
     var tpl=req.body.tpl,setid=req.body.setid;
     console.log(tpl);
@@ -285,6 +286,7 @@ var logtpl = function(req,res){
 	res.error(e);
     });
 }
+
 var filterFromDb =function(req,res){
     var tpl=req.body.tpl,setid=req.body.setid;
     if(!tpl || !setid){
@@ -309,7 +311,7 @@ var filterFromDb =function(req,res){
 	case 'china':
 	    exchanges.push('SHSE','SZSE');
 	case 'other':
-	    exchanges.push('AIM','AMEX','DB','ENXTAM','OTCBB','OTCPK','SGX','TSE','TSX','BSE','SET','HASTC','HOSE');
+	    exchanges.push('AIM','AMEX','DB','ENXTAM','OTCBB','OTCPK','SGX','TSE','TSX','BSE','SET','HASTC','HOSE',"ASX","BASE","BAX","BDL","BIT","BSE","Catalist","CNSX","COSE","ENXTBR","ENXTPA","GTSM","JASDAQ","JKSE","JSE","KASE","KLSE","KOSDAQ","KOSE","KWSE","LSE","MISX","MutualFund","NGM","NZSE","OB","OM","PSE","SHSC","SWX","TASE","TSEC","TSXV","WSE","XSAT","XTRA");
 	    break;
 	default:
 	    break;
@@ -357,10 +359,10 @@ var filterFromDb =function(req,res){
 		    && exFunc(item);
 	    });
 	    
-	    // console.log("%d, %d",records.length,result.length);
-	    // console.log(JSON.stringify(records));
-	    // console.log();
-	    // console.log(JSON.stringify(result));
+	    console.log("%d, %d",records.length,result.length);
+	    console.log(JSON.stringify(records));
+	    console.log();
+	    console.log(JSON.stringify(result));
 	    
 	    models.Result.create({
 		content:JSON.stringify(result),

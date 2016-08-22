@@ -16,8 +16,10 @@ var importer = function(){
     this.people = {};
     this.seedPerson={};
     this.seedCompany={};
-    this.relatedPerson=[];
+    this.relatedPersonList=[];
+    this.relatedCompanyList = {};
 }
+
 var merge2Objects =function(targetObj,curObj){
     Object.keys(curObj).reduce(function(pre,cur){
 	pre[cur] = curObj[cur];
@@ -25,6 +27,7 @@ var merge2Objects =function(targetObj,curObj){
     },targetObj);
     return targetObj;
 }
+
 importer.prototype.init = function(){
     if(fs.existsSync(this.dataDir+this.seedPersonFile)){
 	this.seedPerson = JSON.parse(fs.readFileSync(this.dataDir+this.seedPersonFile).toString());
@@ -39,7 +42,7 @@ importer.prototype.init = function(){
 	if(filename.indexOf("csr")>-1){
 	    this.relatedCompanyFiles.push(filename);
 	}else if(filename.indexOf("psr")>-1){
-	    this.relatedPersonFiles.push(filename);
+ 	    this.relatedPersonFiles.push(filename);
 	}
     },this);
     this.relations = [];
@@ -89,29 +92,35 @@ importer.prototype.createRelatedCompanyPerson = function(){
 importer.prototype.start = function(){
     this.init();
     this.ep.all("companyDone","personDone",function(){
-	return;
-	that.createRelation();
-	that.createCompanyPerson(that.people);// link one person to one or more companies
+	//return;
+	//that.createRelation();
+	that.createCompanyPerson(that.seedPerson);// link one person to one or more companies
+	
+	for(var i = 0; i<that.relatedPersonList.length; i++){
+	    that.createCompanyPerson(that.relatedPersonList[i]);
+	}
     });
     
-    emitter.on("companyDone",function(){
+    emitter.on("companyDone",function(){// do related while seed done
 	if(that.relatedCompanyFiles.length>0){
 	    var fname = that.relatedCompanyFiles.shift();
-	    var cp = JSON.parse(fs.readFileSync(that.dataDir+that.relatedDir+fname).toString());
-	    merge2Objects(that.companies,cp);
-	    that.createCompany(cp);
+	    var csr = JSON.parse(fs.readFileSync(that.dataDir+that.relatedDir+fname).toString());
+	    //that.relatedCompanyList.push(csr);
+	    merge2Objects(that.companies,csr);
+	    that.createCompany(csr);
 	}else{
 	    that.ep.emit("companyDone");
 	    that.createStock(that.companies);
 	}
     });
     
-    emitter.on("personDone",function(){
+    emitter.on("personDone",function(){// do related while seed done
 	if(that.relatedPersonFiles.length>0){
 	    var fname = that.relatedPersonFiles.shift();
-	    var p = JSON.parse(fs.readFileSync(that.dataDir+that.relatedDir+fname).toString());
-	    merge2Objects(that.people,p);
-	    that.createPerson(p);
+	    var psr = JSON.parse(fs.readFileSync(that.dataDir+that.relatedDir+fname).toString());
+	    that.relatedPersonList.push(psr);
+	    //merge2Objects(that.people,p);
+	    that.createPerson(psr);
 	}else{
 	    that.ep.emit("personDone");
 	}
@@ -165,26 +174,28 @@ importer.prototype.createRelation = function(){
 
 importer.prototype.createCompanyPerson = function(people){
     Object.keys(people).forEach(function(k){
-	var p = people[k];
-	//var c = this.companies[p.company_id];
-	var dgr = this.computeDegree(p.professional_titles);
-	
-	var record = {
-	    title:p.professional_titles,
-	    degree:dgr,
-	    Person:{personid:p.person_id},
-	    Company:{companyid:p.company_id}
-	}
-	
-	models.CompanyPerson.findOrCreate({
-	    where:{
-		PersonPersonid:record.Person.personid,
-		CompanyCompanyid:record.Company.companyid
-	    },
-	    defaults:record
-	}).then(function(a){
-	    console.log("create companyperson success, %d",a.length);
-	});
+	var professionals = people[k];// a professional list of person
+	for(var i = 0; i<professionals.length;i++){
+	    var p = professionals[i];
+	    var dgr = this.computeDegree(p.professional_titles);
+	    
+	    var record = {
+		title:p.professional_titles,
+		degree:dgr,
+		Person:{personid:p.person_id},
+		Company:{companyid:p.company_id}
+	    }
+	    
+	    models.CompanyPerson.findOrCreate({
+		where:{
+		    PersonPersonid:record.Person.personid,
+		    CompanyCompanyid:record.Company.companyid
+		},
+		defaults:record
+	    }).then(function(a){
+		console.log("create companyperson success, %d",a.length);
+	    });
+	}		
     },this);
 }
 
@@ -273,7 +284,7 @@ importer.prototype.createStock = function(companyObj){
 	    // 	code = tk;
 	    // 	break;
 	    default:
-		code = [ex,tk].join(":");
+		code = c.exchange_ticker;
 		break;
 	    }
 	    return {
@@ -311,6 +322,7 @@ importer.prototype.createCompany = function(companyObj,fraud){
 	var ids = companies.map(function(company){
 	    return company.companyid;
 	});
+	
 	var addSet = that.subtract(companyids,ids);
 	var records = addSet.map(function(id){
 	    var c = companyObj[id];
@@ -334,12 +346,40 @@ importer.prototype.createCompany = function(companyObj,fraud){
 		fraud:!!fraud
 	    };
 	});
+	
 	models.Company.bulkCreate(records).then(function(a){
 	    console.log("create record success, %d",a.length);
-	    emitter.emit("companyDone");
+	    that.updateCompany(companyObj,fraud,function(e){
+		if(e) console.erro(e);
+		emitter.emit("companyDone");
+	    });
+	    
 	    //that.ep.emit("companyDone");
 	},function(e){
 	    console.log(e);
+	});
+    });
+}
+
+importer.prototype.updateCompany = function(companyObj, fraud, callback){
+    var len = Object.keys(companyObj).length;
+    var desend = function(){
+	if(--len == 0){
+	    if(callback)
+		callback(null);
+	}
+    };
+    
+    Object.keys(companyObj).map(function(key){
+	models.Company.update({
+	    marketcap:companyObj[key]["market capitalization"]
+	},{
+	    where:{companyid:key}
+	}).then(function(rowNumber){
+	    console.log("affected rows: %d", rowNumber);
+	    desend();
+	}, function(e){
+	    desend();
 	});
     });
 }
@@ -364,7 +404,7 @@ importer.prototype.createPerson = function(people){
 	// emitter.emit("personDone");
 	// return;
 	var records = addSet.map(function(id){
-	    var p = people[id];
+	    var p = people[id][0];
 	    return {
 		personid:p.person_id,
 		name:p.person_name,
@@ -381,7 +421,6 @@ importer.prototype.createPerson = function(people){
 	models.Person.bulkCreate(records).then(function(a){
 	    console.log("insert record success, %d",a.length);
 	    emitter.emit("personDone");
-	    //that.ep.emit("personDone");
 	},function(e){
 	    console.log(e);
 	});
